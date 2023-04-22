@@ -1,7 +1,9 @@
 package br.com.authentication.validator;
 
 import br.com.authentication.exception.BadRequestException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserValidatorImpl implements UserValidator {
 
     @Override

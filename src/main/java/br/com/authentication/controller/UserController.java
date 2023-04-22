@@ -3,7 +3,7 @@ package br.com.authentication.controller;
 import br.com.authentication.dto.AuthenticateUserDto;
 import br.com.authentication.dto.RegisterUserDto;
 import br.com.authentication.service.UserService;
-import br.com.authentication.validator.UserValidatorImpl;
+import br.com.authentication.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class UserController {
     @Autowired
     private UserService service;
     @Autowired
-    private UserValidatorImpl validator;
+    private UserValidator validator;
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterUserDto userDto) {
