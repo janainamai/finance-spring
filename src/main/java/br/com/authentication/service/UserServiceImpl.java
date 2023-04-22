@@ -1,8 +1,8 @@
 package br.com.authentication.service;
 
 import br.com.authentication.domain.UserAccount;
-import br.com.authentication.exception.BadRequestException;
 import br.com.authentication.repository.UserRepository;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -30,11 +30,11 @@ public class UserServiceImpl implements UserService {
         Optional<UserAccount> optionalUser = getUserByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            throw new BadRequestException("O email informado não possui cadastro no sistema");
+            throw new ServiceException("O email informado não possui cadastro no sistema");
         }
 
         if (!matchesPassword(password)) {
-            throw new BadRequestException("Senha incorreta");
+            throw new ServiceException("Senha incorreta");
         }
 
         return "Token"; // ToDo

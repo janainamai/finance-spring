@@ -1,6 +1,6 @@
 package br.com.authentication.validator;
 
-import br.com.authentication.exception.BadRequestException;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,7 +9,7 @@ public class UserValidatorImpl implements UserValidator {
     @Override
     public void validateSamePassword(String password1, String password2) {
         if (!password1.equals(password2)) {
-            throw new BadRequestException("As senhas informadas não coincidem");
+            throw new ServiceException("As senhas informadas não coincidem");
         }
     }
 
