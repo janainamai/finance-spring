@@ -1,19 +1,15 @@
 package br.com.authentication.dto;
 
 import br.com.authentication.domain.UserAccount;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class RegisterUserDto {
 
     @NotBlank(message = "Nome é obrigatório")
@@ -21,6 +17,9 @@ public class RegisterUserDto {
 
     @NotBlank(message = "Sobrenome é obrigatório")
     private String lastName;
+
+    @NotBlank(message = "Username é obrigatório")
+    private String username;
 
     @NotBlank(message = "E-mail é obrigatório")
     @Email(message = "E-mail inválido")
