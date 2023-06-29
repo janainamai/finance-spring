@@ -22,10 +22,11 @@ public class UserController {
     @Autowired
     private UserValidator validator;
 
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterUserDto dto) {
-        service.registerUserAccount(dto);
+        service.register(dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
 }

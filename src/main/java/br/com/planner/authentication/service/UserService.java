@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    void registerUserAccount(RegisterUserDto userAccount);
+    void register(RegisterUserDto userAccount);
 
     Optional<UserAccount> getByUsername(String username);
 

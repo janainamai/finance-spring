@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void registerUserAccount(RegisterUserDto dto) {
+    public void register(RegisterUserDto dto) {
         validator.validateSamePassword(dto.getPassword(), dto.getConfirmPassword());
         validator.validateUsernameAlreadyExists(dto.getUsername());
 

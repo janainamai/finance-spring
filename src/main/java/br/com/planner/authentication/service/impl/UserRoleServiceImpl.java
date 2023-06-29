@@ -11,10 +11,11 @@ import br.com.planner.authentication.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class UserRoleServiceImpl implements UserRoleService {
@@ -35,7 +36,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
         UserRoleCreatedDto userRoleCreatedDto = new UserRoleCreatedDto();
         userRoleCreatedDto.setUsername(userAccount.getUsername());
-        userRoleCreatedDto.setRoles(roles.stream().map(Role::getName).collect(Collectors.toList()));
+        userRoleCreatedDto.setRoles(roles.stream().map(Role::getName).collect(toList()));
 
         return userRoleCreatedDto;
     }
@@ -47,16 +48,20 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     private List<Role> getRoles(CreateUserRoleDto dto) {
-        List<Role> roles = roleRepository.findAllById(dto.getRoleIds());
-        if (CollectionUtils.isEmpty(roles)) {
-            throw new BadRequestException("Nenhuma role foi encontrada");
-        }
-        return roles;
+        return dto.getRoleIds()
+                .stream()
+                .map(this::getRoleOrThrowException)
+                .collect(toList());
+    }
+
+    private Role getRoleOrThrowException(UUID id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Role not found with id ".concat(id.toString())));
     }
 
     private UserAccount getUserAccount(CreateUserRoleDto dto) {
         return userRepository.findById(dto.getIdUser())
-                .orElseThrow(() -> new BadRequestException("Usuário não encontrado"));
+                .orElseThrow(() -> new BadRequestException("The user was not found"));
     }
 
 }
