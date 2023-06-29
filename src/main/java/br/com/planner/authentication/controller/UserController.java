@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private UserValidator validator;
 
-    @PostMapping()
+    @PostMapping("/new")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterUserDto dto) {
         service.register(dto);
         return new ResponseEntity<>(HttpStatus.OK);

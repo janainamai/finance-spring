@@ -3,7 +3,6 @@ package br.com.planner.authentication.security;
 import br.com.planner.authentication.domain.UserAccount;
 import br.com.planner.authentication.exception.BadRequestException;
 import br.com.planner.authentication.repository.UserRepository;
-import br.com.planner.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,8 +15,6 @@ import java.util.Objects;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserService service;
-    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -25,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserAccount user = userRepository.findByUsernameFetchRoles(username);
 
         if (Objects.isNull(user)) {
-            throw new BadRequestException("Usuário não existe");
+            throw new BadRequestException("User does not exists");
         }
 
         return CustomUserDetails.create(user);
