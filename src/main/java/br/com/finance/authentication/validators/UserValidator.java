@@ -1,4 +1,4 @@
-package br.com.finance.authentication.validator;
+package br.com.finance.authentication.validators;
 
 public interface UserValidator {
 

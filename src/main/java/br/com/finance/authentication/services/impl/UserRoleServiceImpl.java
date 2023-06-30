@@ -1,13 +1,12 @@
-package br.com.finance.authentication.service.impl;
+package br.com.finance.authentication.services.impl;
 
-import br.com.finance.authentication.domain.Role;
-import br.com.finance.authentication.domain.UserAccount;
-import br.com.finance.authentication.dto.CreateUserRoleDto;
-import br.com.finance.authentication.dto.UserRoleCreatedDto;
+import br.com.finance.authentication.domain.entities.Role;
+import br.com.finance.authentication.domain.entities.User;
+import br.com.finance.authentication.domain.dto.CreateUserRoleDto;
 import br.com.finance.authentication.infra.exception.BadRequestException;
-import br.com.finance.authentication.repository.RoleRepository;
-import br.com.finance.authentication.repository.UserRepository;
-import br.com.finance.authentication.service.UserRoleService;
+import br.com.finance.authentication.repositories.RoleRepository;
+import br.com.finance.authentication.repositories.UserRepository;
+import br.com.finance.authentication.services.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,18 +26,12 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     @Transactional
-    public UserRoleCreatedDto saveUserRole(CreateUserRoleDto dto) {
-        UserAccount userAccount = getUserAccount(dto);
+    public User saveUserRole(CreateUserRoleDto dto) {
+        User user = getUser(dto);
         List<Role> roles = getRoles(dto);
 
-        userAccount.setRoles(roles);
-        userRepository.save(userAccount);
-
-        UserRoleCreatedDto userRoleCreatedDto = new UserRoleCreatedDto();
-        userRoleCreatedDto.setLogin(userAccount.getLogin());
-        userRoleCreatedDto.setRoles(roles.stream().map(Role::getName).collect(toList()));
-
-        return userRoleCreatedDto;
+        user.setRoles(roles);
+        return userRepository.save(user);
     }
 
     @Override
@@ -48,7 +41,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     private List<Role> getRoles(CreateUserRoleDto dto) {
-        return dto.getRoleIds()
+        return dto.roleIds()
                 .stream()
                 .map(this::getRoleOrThrowException)
                 .collect(toList());
@@ -59,8 +52,8 @@ public class UserRoleServiceImpl implements UserRoleService {
                 .orElseThrow(() -> new BadRequestException("Role not found with id ".concat(id.toString())));
     }
 
-    private UserAccount getUserAccount(CreateUserRoleDto dto) {
-        return userRepository.findById(dto.getIdUser())
+    private User getUser(CreateUserRoleDto dto) {
+        return userRepository.findById(dto.idUser())
                 .orElseThrow(() -> new BadRequestException("The user was not found"));
     }
 

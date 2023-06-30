@@ -1,7 +1,7 @@
-package br.com.finance.authentication.validator;
+package br.com.finance.authentication.validators;
 
 import br.com.finance.authentication.infra.exception.BadRequestException;
-import br.com.finance.authentication.repository.UserRepository;
+import br.com.finance.authentication.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

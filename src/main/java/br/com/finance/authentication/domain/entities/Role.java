@@ -1,4 +1,4 @@
-package br.com.finance.authentication.domain;
+package br.com.finance.authentication.domain.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,5 +22,9 @@ public class Role {
     private UUID id;
 
     private String name;
+
+    public Role(String name) {
+        this.name = name;
+    }
 
 }

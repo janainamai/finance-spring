@@ -1,6 +1,6 @@
-package br.com.finance.authentication.service.impl;
+package br.com.finance.authentication.services.impl;
 
-import br.com.finance.authentication.service.EncoderService;
+import br.com.finance.authentication.services.EncoderService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

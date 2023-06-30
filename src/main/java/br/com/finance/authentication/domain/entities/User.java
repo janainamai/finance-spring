@@ -1,4 +1,4 @@
-package br.com.finance.authentication.domain;
+package br.com.finance.authentication.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "user_account")
-@Table(name = "user_account")
+@Entity(name = "users")
+@Table(name = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class UserAccount implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "UUID")

@@ -1,6 +1,6 @@
 package br.com.finance.authentication.infra.security;
 
-import br.com.finance.authentication.repository.UserRepository;
+import br.com.finance.authentication.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

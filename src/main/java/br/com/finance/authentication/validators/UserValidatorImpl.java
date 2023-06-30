@@ -1,6 +1,6 @@
-package br.com.finance.authentication.validator;
+package br.com.finance.authentication.validators;
 
-import br.com.finance.authentication.repository.UserRepository;
+import br.com.finance.authentication.repositories.UserRepository;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

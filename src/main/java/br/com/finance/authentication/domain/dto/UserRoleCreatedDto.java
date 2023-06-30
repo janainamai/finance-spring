@@ -1,4 +1,4 @@
-package br.com.finance.authentication.dto;
+package br.com.finance.authentication.domain.dto;
 
 import lombok.Data;
 

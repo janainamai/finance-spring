@@ -1,6 +1,6 @@
 package br.com.finance.authentication.impl;
 
-import br.com.finance.authentication.service.impl.EncodeServiceImpl;
+import br.com.finance.authentication.services.impl.EncodeServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

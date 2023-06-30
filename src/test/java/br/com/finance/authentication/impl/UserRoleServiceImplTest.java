@@ -1,13 +1,12 @@
 package br.com.finance.authentication.impl;
 
-import br.com.finance.authentication.domain.Role;
-import br.com.finance.authentication.domain.UserAccount;
-import br.com.finance.authentication.dto.CreateUserRoleDto;
-import br.com.finance.authentication.dto.UserRoleCreatedDto;
+import br.com.finance.authentication.domain.dto.CreateUserRoleDto;
+import br.com.finance.authentication.domain.entities.Role;
+import br.com.finance.authentication.domain.entities.User;
 import br.com.finance.authentication.infra.exception.BadRequestException;
-import br.com.finance.authentication.repository.RoleRepository;
-import br.com.finance.authentication.repository.UserRepository;
-import br.com.finance.authentication.service.impl.UserRoleServiceImpl;
+import br.com.finance.authentication.repositories.RoleRepository;
+import br.com.finance.authentication.repositories.UserRepository;
+import br.com.finance.authentication.services.impl.UserRoleServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +34,7 @@ class UserRoleServiceImplTest {
     @Mock
     private RoleRepository roleRepository;
     @Captor
-    private ArgumentCaptor<UserAccount> captorUser;
+    private ArgumentCaptor<User> captorUser;
 
     @Test
     void testSaveUserRoleWhenUserAndRolesWasFound() {
@@ -43,27 +42,25 @@ class UserRoleServiceImplTest {
         UUID roleUserId = UUID.randomUUID();
         UUID roleAdminId = UUID.randomUUID();
 
-        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto();
-        createUserRoleDto.setIdUser(userId);
-        createUserRoleDto.setRoleIds(List.of(roleUserId, roleAdminId));
+        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto(userId, List.of(roleUserId, roleAdminId));
 
-        UserAccount userFound = new UserAccount();
+        User userFound = new User();
         userFound.setId(userId);
         userFound.setLogin("janainamai");
-        when(userRepository.findById(createUserRoleDto.getIdUser())).thenReturn(Optional.of(userFound));
+        when(userRepository.findById(createUserRoleDto.idUser())).thenReturn(Optional.of(userFound));
 
         Role roleUser = createRole("USER");
         Role roleAdmin = createRole("ADMIN");
         when(roleRepository.findById(roleUserId)).thenReturn(Optional.of(roleUser));
         when(roleRepository.findById(roleAdminId)).thenReturn(Optional.of(roleAdmin));
 
-        UserRoleCreatedDto userRoleCreatedDto = service.saveUserRole(createUserRoleDto);
+        User user = service.saveUserRole(createUserRoleDto);
 
-        assertThat(userRoleCreatedDto.getRoles()).containsAll(List.of("USER", "ADMIN"));
-        assertThat(userRoleCreatedDto.getLogin()).isEqualTo(userFound.getUsername());
+        assertThat(user.getRoles()).containsAll(List.of(roleAdmin, roleUser));
+        assertThat(user.getLogin()).isEqualTo(userFound.getUsername());
         verify(userRepository).save(captorUser.capture());
 
-        UserAccount savedUser = captorUser.getValue();
+        User savedUser = captorUser.getValue();
         assertThat(savedUser.getId()).isEqualTo(userFound.getId());
         assertThat(savedUser.getUsername()).isEqualTo(userFound.getUsername());
         assertThat(savedUser.getRoles()).containsAll(List.of(roleUser, roleAdmin));
@@ -75,11 +72,9 @@ class UserRoleServiceImplTest {
         UUID roleUserId = UUID.randomUUID();
         UUID roleAdminId = UUID.randomUUID();
 
-        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto();
-        createUserRoleDto.setIdUser(userId);
-        createUserRoleDto.setRoleIds(List.of(roleUserId, roleAdminId));
+        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto(userId, List.of(roleUserId, roleAdminId));
 
-        when(userRepository.findById(createUserRoleDto.getIdUser())).thenReturn(Optional.empty());
+        when(userRepository.findById(createUserRoleDto.idUser())).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> service.saveUserRole(createUserRoleDto))
@@ -91,11 +86,9 @@ class UserRoleServiceImplTest {
         UUID userId = UUID.randomUUID();
         UUID roleUserId = UUID.randomUUID();
 
-        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto();
-        createUserRoleDto.setIdUser(userId);
-        createUserRoleDto.setRoleIds(List.of(roleUserId));
+        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto(userId, List.of(roleUserId));
 
-        when(userRepository.findById(createUserRoleDto.getIdUser())).thenReturn(Optional.of(new UserAccount()));
+        when(userRepository.findById(createUserRoleDto.idUser())).thenReturn(Optional.of(new User()));
         when(roleRepository.findById(roleUserId)).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(BadRequestException.class)
