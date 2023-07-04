@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Role {
+public class RoleEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -23,7 +23,7 @@ public class Role {
 
     private String name;
 
-    public Role(String name) {
+    public RoleEntity(String name) {
         this.name = name;
     }
 

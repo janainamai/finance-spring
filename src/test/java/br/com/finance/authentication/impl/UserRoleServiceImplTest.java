@@ -1,11 +1,11 @@
 package br.com.finance.authentication.impl;
 
-import br.com.finance.authentication.domain.dto.CreateUserRoleDto;
-import br.com.finance.authentication.domain.entities.Role;
-import br.com.finance.authentication.domain.entities.User;
+import br.com.finance.authentication.domain.entities.RoleEntity;
+import br.com.finance.authentication.domain.entities.UserEntity;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.authentication.repositories.RoleRepository;
 import br.com.finance.authentication.repositories.UserRepository;
+import br.com.finance.authentication.services.dto.CreateUserRoleDto;
 import br.com.finance.authentication.services.impl.UserRoleServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,36 +34,38 @@ class UserRoleServiceImplTest {
     @Mock
     private RoleRepository roleRepository;
     @Captor
-    private ArgumentCaptor<User> captorUser;
+    private ArgumentCaptor<UserEntity> captorUser;
 
     @Test
     void testSaveUserRoleWhenUserAndRolesWasFound() {
         UUID userId = UUID.randomUUID();
         UUID roleUserId = UUID.randomUUID();
         UUID roleAdminId = UUID.randomUUID();
+        List<UUID> rolesIds = List.of(roleUserId, roleAdminId);
 
-        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto(userId, List.of(roleUserId, roleAdminId));
+        CreateUserRoleDto dto = new CreateUserRoleDto();
+        dto.setUserId(userId);
+        dto.setRoleIds(rolesIds);
 
-        User userFound = new User();
+        UserEntity userFound = new UserEntity();
         userFound.setId(userId);
         userFound.setLogin("janainamai");
-        when(userRepository.findById(createUserRoleDto.idUser())).thenReturn(Optional.of(userFound));
+        when(userRepository.findById(dto.getUserId())).thenReturn(Optional.of(userFound));
 
-        Role roleUser = createRole("USER");
-        Role roleAdmin = createRole("ADMIN");
+        RoleEntity roleUser = createRole("USER");
+        RoleEntity roleAdmin = createRole("ADMIN");
+        List<RoleEntity> roles = List.of(roleAdmin, roleUser);
         when(roleRepository.findById(roleUserId)).thenReturn(Optional.of(roleUser));
         when(roleRepository.findById(roleAdminId)).thenReturn(Optional.of(roleAdmin));
 
-        User user = service.saveUserRole(createUserRoleDto);
+        service.saveUserRole(dto);
 
-        assertThat(user.getRoles()).containsAll(List.of(roleAdmin, roleUser));
-        assertThat(user.getLogin()).isEqualTo(userFound.getUsername());
         verify(userRepository).save(captorUser.capture());
 
-        User savedUser = captorUser.getValue();
+        UserEntity savedUser = captorUser.getValue();
         assertThat(savedUser.getId()).isEqualTo(userFound.getId());
         assertThat(savedUser.getUsername()).isEqualTo(userFound.getUsername());
-        assertThat(savedUser.getRoles()).containsAll(List.of(roleUser, roleAdmin));
+        assertThat(savedUser.getRoles()).containsAll(roles);
     }
 
     @Test
@@ -71,42 +73,47 @@ class UserRoleServiceImplTest {
         UUID userId = UUID.randomUUID();
         UUID roleUserId = UUID.randomUUID();
         UUID roleAdminId = UUID.randomUUID();
+        List<UUID> roleIds = List.of(roleUserId, roleAdminId);
 
-        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto(userId, List.of(roleUserId, roleAdminId));
+        CreateUserRoleDto dto = new CreateUserRoleDto();
+        dto.setUserId(userId);
+        dto.setRoleIds(roleIds);
 
-        when(userRepository.findById(createUserRoleDto.idUser())).thenReturn(Optional.empty());
+        when(userRepository.findById(dto.getUserId())).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> service.saveUserRole(createUserRoleDto))
+                .isThrownBy(() -> service.saveUserRole(dto))
                 .withMessage("The user was not found");
     }
 
     @Test
     void testSaveUserRoleWhenRolesWasNotFound() {
         UUID userId = UUID.randomUUID();
-        UUID roleUserId = UUID.randomUUID();
+        UUID roleId = UUID.randomUUID();
 
-        CreateUserRoleDto createUserRoleDto = new CreateUserRoleDto(userId, List.of(roleUserId));
+        CreateUserRoleDto dto = new CreateUserRoleDto();
+        dto.setUserId(userId);
+        dto.setRoleIds(List.of(roleId));
 
-        when(userRepository.findById(createUserRoleDto.idUser())).thenReturn(Optional.of(new User()));
-        when(roleRepository.findById(roleUserId)).thenReturn(Optional.empty());
+        when(userRepository.findById(dto.getUserId())).thenReturn(Optional.of(new UserEntity()));
+        when(roleRepository.findById(roleId)).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> service.saveUserRole(createUserRoleDto))
-                .withMessage("Role not found with id ".concat(roleUserId.toString()));
+                .isThrownBy(() -> service.saveUserRole(dto))
+                .withMessage("Role not found with id ".concat(roleId.toString()));
     }
 
     @Test
     void testFindAll() {
-        List<Role> rolesFound = List.of(createRole("USER"), createRole("ADMIN"));
+        List<RoleEntity> rolesFound = List.of(createRole("USER"), createRole("ADMIN"));
         when(roleRepository.findAll()).thenReturn(rolesFound);
 
-        List<Role> roles = service.findAll();
+        List<RoleEntity> roles = service.findAll();
         assertThat(roles).isEqualTo(rolesFound);
     }
 
-    private static Role createRole(String name) {
-        Role roleUser = new Role();
+    private static RoleEntity createRole(String name) {
+        RoleEntity roleUser = new RoleEntity();
         roleUser.setName(name);
         return roleUser;
     }

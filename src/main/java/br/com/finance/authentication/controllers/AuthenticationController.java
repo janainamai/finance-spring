@@ -1,10 +1,11 @@
 package br.com.finance.authentication.controllers;
 
-import br.com.finance.authentication.domain.dto.AuthenticationDto;
-import br.com.finance.authentication.domain.dto.RegisterUserDto;
+import br.com.finance.authentication.controllers.client.input.LoginInput;
+import br.com.finance.authentication.controllers.client.input.RegisterUserInput;
 import br.com.finance.authentication.services.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,17 +20,17 @@ public class AuthenticationController {
     private AuthenticationService service;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody AuthenticationDto input) {
-        service.authenticate(input);
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginInput input) {
+        service.login(input.toDto());
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterUserDto input) {
-        service.register(input);
+    public ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterUserInput input) {
+        service.register(input.toDto());
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

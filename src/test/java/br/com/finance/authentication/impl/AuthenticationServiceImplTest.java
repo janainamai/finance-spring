@@ -1,9 +1,9 @@
 package br.com.finance.authentication.impl;
 
-import br.com.finance.authentication.domain.dto.RegisterUserDto;
-import br.com.finance.authentication.domain.entities.User;
+import br.com.finance.authentication.domain.entities.UserEntity;
 import br.com.finance.authentication.repositories.UserRepository;
 import br.com.finance.authentication.services.EncoderService;
+import br.com.finance.authentication.services.dto.RegisterUserDto;
 import br.com.finance.authentication.services.impl.AuthenticationServiceImpl;
 import br.com.finance.authentication.validators.UserValidator;
 import org.junit.jupiter.api.Test;
@@ -29,21 +29,25 @@ class AuthenticationServiceImplTest {
     @Mock
     private EncoderService encoder;
     @Captor
-    private ArgumentCaptor<User> captorUser;
+    private ArgumentCaptor<UserEntity> captorUser;
 
     @Test
     void testRegister() {
-        RegisterUserDto dto = new RegisterUserDto("janainamai", "janainamai@hotmail.com", "admin", "admin");
+        RegisterUserDto dto = new RegisterUserDto();
+        dto.setLogin("janainamai");
+        dto.setEmail("janainamai@hotmail.com");
+        dto.setPassword("admin");
+        dto.setConfirmPassword("admin");
 
         service.register(dto);
 
-        verify(validator).validateSamePassword(dto.password(), dto.confirmPassword());
-        verify(validator).validateUsernameAlreadyExists(dto.login());
-        verify(encoder).encode(dto.password());
+        verify(validator).validateSamePassword(dto.getPassword(), dto.getConfirmPassword());
+        verify(validator).validateUsernameAlreadyExists(dto.getLogin());
+        verify(encoder).encode(dto.getPassword());
         verify(repository).save(captorUser.capture());
 
-        User savedUser = captorUser.getValue();
-        assertThat(savedUser.getPassword()).isNotEqualTo(dto.password());
+        UserEntity savedUser = captorUser.getValue();
+        assertThat(savedUser.getPassword()).isNotEqualTo(dto.getPassword());
     }
 
 }

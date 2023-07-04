@@ -1,12 +1,12 @@
 package br.com.finance.authentication.services.impl;
 
-import br.com.finance.authentication.domain.entities.Role;
-import br.com.finance.authentication.domain.entities.User;
-import br.com.finance.authentication.domain.dto.AuthenticationDto;
-import br.com.finance.authentication.domain.dto.RegisterUserDto;
+import br.com.finance.authentication.domain.entities.RoleEntity;
+import br.com.finance.authentication.domain.entities.UserEntity;
 import br.com.finance.authentication.repositories.UserRepository;
 import br.com.finance.authentication.services.EncoderService;
 import br.com.finance.authentication.services.AuthenticationService;
+import br.com.finance.authentication.services.dto.LoginDto;
+import br.com.finance.authentication.services.dto.RegisterUserDto;
 import br.com.finance.authentication.utils.RoleConstants;
 import br.com.finance.authentication.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,21 +31,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public void register(RegisterUserDto input) {
-        validator.validateSamePassword(input.login(), input.confirmPassword());
-        validator.validateUsernameAlreadyExists(input.login());
+    public void register(RegisterUserDto dto) {
+        validator.validateSamePassword(dto.getPassword(), dto.getConfirmPassword());
+        validator.validateUsernameAlreadyExists(dto.getLogin());
 
-        User user = input.toUser();
-        user.setPassword(encoder.encode(user.getPassword()));
-        user.setRoles(List.of(new Role(RoleConstants.FREE_USER)));
+        UserEntity user = new UserEntity();
+        user.setLogin(dto.getLogin());
+        user.setEmail(dto.getEmail());
+        user.setPassword(encoder.encode(dto.getPassword()));
+        user.setRoles(List.of(new RoleEntity(RoleConstants.FREE_USER)));
 
         repository.save(user);
     }
 
     @Override
-    public void authenticate(AuthenticationDto input) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(input.login(), input.password());
-        authenticationManager.authenticate(usernamePassword);
+    public void login(LoginDto dto) {
+        var loginPassword = new UsernamePasswordAuthenticationToken(dto.getLogin(), dto.getPassword());
+        authenticationManager.authenticate(loginPassword);
     }
 
 }

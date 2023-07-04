@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class BankAccount {
+public class BankAccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

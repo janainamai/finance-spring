@@ -1,12 +1,12 @@
 package br.com.finance.authentication.services.impl;
 
-import br.com.finance.authentication.domain.entities.Role;
-import br.com.finance.authentication.domain.entities.User;
-import br.com.finance.authentication.domain.dto.CreateUserRoleDto;
+import br.com.finance.authentication.domain.entities.RoleEntity;
+import br.com.finance.authentication.domain.entities.UserEntity;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.authentication.repositories.RoleRepository;
 import br.com.finance.authentication.repositories.UserRepository;
 import br.com.finance.authentication.services.UserRoleService;
+import br.com.finance.authentication.services.dto.CreateUserRoleDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,34 +26,34 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     @Transactional
-    public User saveUserRole(CreateUserRoleDto dto) {
-        User user = getUser(dto);
-        List<Role> roles = getRoles(dto);
+    public void saveUserRole(CreateUserRoleDto dto) {
+        UserEntity user = getUser(dto);
+        List<RoleEntity> roles = getRoles(dto);
 
         user.setRoles(roles);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Role> findAll() {
+    public List<RoleEntity> findAll() {
         return roleRepository.findAll();
     }
 
-    private List<Role> getRoles(CreateUserRoleDto dto) {
-        return dto.roleIds()
+    private List<RoleEntity> getRoles(CreateUserRoleDto dto) {
+        return dto.getRoleIds()
                 .stream()
                 .map(this::getRoleOrThrowException)
                 .collect(toList());
     }
 
-    private Role getRoleOrThrowException(UUID id) {
+    private RoleEntity getRoleOrThrowException(UUID id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Role not found with id ".concat(id.toString())));
     }
 
-    private User getUser(CreateUserRoleDto dto) {
-        return userRepository.findById(dto.idUser())
+    private UserEntity getUser(CreateUserRoleDto dto) {
+        return userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new BadRequestException("The user was not found"));
     }
 

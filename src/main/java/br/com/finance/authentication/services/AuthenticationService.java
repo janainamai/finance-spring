@@ -1,11 +1,11 @@
 package br.com.finance.authentication.services;
 
-import br.com.finance.authentication.domain.dto.AuthenticationDto;
-import br.com.finance.authentication.domain.dto.RegisterUserDto;
+import br.com.finance.authentication.services.dto.LoginDto;
+import br.com.finance.authentication.services.dto.RegisterUserDto;
 
 public interface AuthenticationService {
 
-    void register(RegisterUserDto user);
+    void register(RegisterUserDto dto);
 
-    void authenticate(AuthenticationDto input);
+    void login(LoginDto dto);
 }

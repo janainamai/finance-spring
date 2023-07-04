@@ -1,9 +1,8 @@
 package br.com.finance.finance.controllers;
 
-import br.com.finance.finance.domain.converters.BankAccounOutputConverter;
-import br.com.finance.finance.domain.dto.BankAccountOutput;
-import br.com.finance.finance.domain.entities.BankAccount;
+import br.com.finance.finance.controllers.client.output.BankAccountOutput;
 import br.com.finance.finance.services.BankAccountService;
+import br.com.finance.finance.services.dto.BankAccountDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +18,9 @@ public class BankAccountController {
 
     @GetMapping
     public ResponseEntity<List<BankAccountOutput>> retrieveAll() {
-        List<BankAccount> accounts = service.retrieveAll();
+        List<BankAccountDto> accounts = service.retrieveAll();
 
-        return ResponseEntity.ok(BankAccounOutputConverter.convertAll(accounts));
+        return ResponseEntity.ok(BankAccountOutput.fromDtos(accounts));
     }
 
 }
