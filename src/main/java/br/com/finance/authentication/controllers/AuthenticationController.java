@@ -2,6 +2,7 @@ package br.com.finance.authentication.controllers;
 
 import br.com.finance.authentication.controllers.client.input.LoginInput;
 import br.com.finance.authentication.controllers.client.input.RegisterUserInput;
+import br.com.finance.authentication.controllers.client.output.LoginOutput;
 import br.com.finance.authentication.services.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ public class AuthenticationController {
     private AuthenticationService service;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginInput input) {
-        service.login(input.toDto());
+    public ResponseEntity<LoginOutput> login(@Valid @RequestBody LoginInput input) {
+        var token = service.login(input.toDto());
 
-        return ResponseEntity.ok().build();
+        LoginOutput output = new LoginOutput();
+        output.setToken(token);
+        return ResponseEntity.ok(output);
     }
 
     @PostMapping("/register")

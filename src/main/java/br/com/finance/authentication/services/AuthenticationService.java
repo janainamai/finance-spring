@@ -7,5 +7,5 @@ public interface AuthenticationService {
 
     void register(RegisterUserDto dto);
 
-    void login(LoginDto dto);
+    String login(LoginDto dto);
 }

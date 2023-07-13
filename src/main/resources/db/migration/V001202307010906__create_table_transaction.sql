@@ -1,4 +1,4 @@
-CREATE TABLE publictransaction (
+CREATE TABLE public."transaction" (
   id UUID PRIMARY KEY,
   description VARCHAR(100) NOT NULL,
   amount NUMERIC(19, 2) NOT NULL,
