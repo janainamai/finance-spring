@@ -1,7 +1,7 @@
 package br.com.finance.authentication.infra.security;
 
 import br.com.finance.authentication.repositories.UserRepository;
-import br.com.finance.authentication.services.TokenService;
+import br.com.finance.authentication.infra.security.intefaces.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,16 +35,16 @@ public class SecurityFilterImpl extends OncePerRequestFilter {
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            filterChain.doFilter(request, response);
         }
+
+        filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
 
         if (nonNull(authHeader)) {
-            return authHeader.replace("Bearer", "");
+            return authHeader.replace("Bearer ", "");
         } else {
             return null;
         }

@@ -40,6 +40,13 @@ public class UserRoleServiceImpl implements UserRoleService {
         return roleRepository.findAll();
     }
 
+    @Override
+    @Transactional
+    public RoleEntity getRoleByName(String name) {
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new BadRequestException("Role not found with name: " + name));
+    }
+
     private List<RoleEntity> getRoles(CreateUserRoleDto dto) {
         return dto.getRoleIds()
                 .stream()

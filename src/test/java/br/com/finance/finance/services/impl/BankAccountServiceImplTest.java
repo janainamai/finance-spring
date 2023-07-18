@@ -3,8 +3,11 @@ package br.com.finance.finance.services.impl;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
 import br.com.finance.finance.services.dto.BankAccountDto;
+import br.com.finance.finance.services.dto.CreateBankAccountDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,7 +28,8 @@ class BankAccountServiceImplTest {
     private BankAccountServiceImpl service;
     @Mock
     private BankAccountRepository repository;
-
+    @Captor
+    private ArgumentCaptor<BankAccountEntity> captorBank;
     @Test
     void testRetrieveAllWhenFound() {
 
@@ -67,6 +72,23 @@ class BankAccountServiceImplTest {
 
         List<BankAccountDto> accounts = service.retrieveAll();
         assertThat(accounts).isEmpty();
+    }
+
+    @Test
+    void testCreate() {
+        CreateBankAccountDto dto = new CreateBankAccountDto();
+        dto.setName("Blue account");
+        dto.setDescription("Blue description");
+
+        service.create(dto);
+
+        verify(repository).save(captorBank.capture());
+
+        BankAccountEntity savedBank = captorBank.getValue();
+        assertThat(savedBank.getName()).isEqualTo(dto.getName());
+        assertThat(savedBank.getDescription()).isEqualTo(dto.getDescription());
+        assertThat(savedBank.getTotalBalance()).isEqualTo(BigDecimal.ZERO);
+        assertThat(savedBank.isActive()).isTrue();
     }
 
 }

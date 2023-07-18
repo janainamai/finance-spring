@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/role")
 public class AuthenticationRoleController {
 
     @Autowired
     private UserRoleService roleService;
 
-    @GetMapping("/role")
+    @GetMapping()
     public ResponseEntity<List<RoleEntity>> getAllRoles() {
         return ResponseEntity.ok(roleService.findAll());
     }
 
-    @PostMapping("/role")
+    @PostMapping()
     public ResponseEntity<Void> createUserRole(@Valid @RequestBody CreateUserRoleInput input) {
         roleService.saveUserRole(input.toDto());
 

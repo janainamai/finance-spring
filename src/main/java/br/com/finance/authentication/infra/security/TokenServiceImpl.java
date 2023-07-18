@@ -1,7 +1,7 @@
-package br.com.finance.authentication.services.impl;
+package br.com.finance.authentication.infra.security;
 
 import br.com.finance.authentication.domain.entities.UserEntity;
-import br.com.finance.authentication.services.TokenService;
+import br.com.finance.authentication.infra.security.intefaces.TokenService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

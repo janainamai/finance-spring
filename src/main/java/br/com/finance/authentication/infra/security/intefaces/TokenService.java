@@ -1,4 +1,4 @@
-package br.com.finance.authentication.services;
+package br.com.finance.authentication.infra.security.intefaces;
 
 import br.com.finance.authentication.domain.entities.UserEntity;
 

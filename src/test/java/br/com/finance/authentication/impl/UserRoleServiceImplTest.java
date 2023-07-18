@@ -7,6 +7,7 @@ import br.com.finance.authentication.repositories.RoleRepository;
 import br.com.finance.authentication.repositories.UserRepository;
 import br.com.finance.authentication.services.dto.CreateUserRoleDto;
 import br.com.finance.authentication.services.impl.UserRoleServiceImpl;
+import br.com.finance.authentication.utils.RoleConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -110,6 +111,26 @@ class UserRoleServiceImplTest {
 
         List<RoleEntity> roles = service.findAll();
         assertThat(roles).isEqualTo(rolesFound);
+    }
+
+    @Test
+    void testGetRoleByNameWhenItFound() {
+        RoleEntity adminRole = new RoleEntity();
+        adminRole.setName(RoleConstants.ADMIN);
+
+        when(roleRepository.findByName(RoleConstants.ADMIN)).thenReturn(Optional.of(adminRole));
+
+        RoleEntity role = service.getRoleByName(RoleConstants.ADMIN);
+        assertThat(role.getName()).isEqualTo(RoleConstants.ADMIN);
+    }
+
+    @Test
+    void testGetRoleByNameWhenItNotFound() {
+        when(roleRepository.findByName(RoleConstants.ADMIN)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.getRoleByName(RoleConstants.ADMIN))
+                .withMessage("Role not found with name: ADMIN");
     }
 
     private static RoleEntity createRole(String name) {
