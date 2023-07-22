@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,14 +28,32 @@ public class SecurityConfigurations {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests( autorize -> autorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/role").hasRole(RoleConstants.ADMIN)
-                        .requestMatchers(HttpMethod.POST, "/role").hasRole(RoleConstants.ADMIN)
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(authorize -> {
+                    configureAuth(authorize);
+                    configureRole(authorize);
+                    configureBank(authorize);
+                    authorize.anyRequest().authenticated();
+                })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    private void configureBank(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize
+                .requestMatchers(HttpMethod.GET, "/bank").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.POST, "/bank").hasRole(RoleConstants.ADMIN);
+    }
+
+    private void configureRole(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize
+                .requestMatchers(HttpMethod.GET, "/role").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.POST, "/role").hasRole(RoleConstants.ADMIN);
+    }
+
+    private void configureAuth(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize
+                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll();
     }
 
     @Bean
