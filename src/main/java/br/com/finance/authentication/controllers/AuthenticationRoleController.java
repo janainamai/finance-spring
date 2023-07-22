@@ -23,7 +23,7 @@ public class AuthenticationRoleController {
     private UserRoleService roleService;
 
     @GetMapping()
-    public ResponseEntity<List<RoleEntity>> getAllRoles() {
+    public ResponseEntity<List<RoleEntity>> getAll() {
         return ResponseEntity.ok(roleService.findAll());
     }
 

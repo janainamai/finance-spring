@@ -20,7 +20,7 @@ public class BankAccountController {
     private BankAccountService service;
 
     @GetMapping
-    public ResponseEntity<List<BankAccountOutput>> retrieveAll() {
+    public ResponseEntity<List<BankAccountOutput>> getAll() {
         List<BankAccountDto> accounts = service.retrieveAll();
 
         return ResponseEntity.ok(BankAccountOutput.fromDtos(accounts));

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthenticationController {
+public class AuthenticationUserController {
 
     @Autowired
     private AuthenticationService service;
@@ -30,7 +30,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterUserInput input) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterUserInput input) {
         service.register(input.toDto());
 
         return new ResponseEntity<>(HttpStatus.CREATED);

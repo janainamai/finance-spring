@@ -1,33 +1,35 @@
-## Sobre o projeto:
+## About the project:
 
-Projeto criado para gerenciar as finanças de 2 pessoas, objetivando o estudo principalmente.
+Project created to manage the finances of 2 individuals, mainly for study purposes.
 
-## Instruções para executar o projeto:
+## Instructions to run the project:
 
-### Instalações necessárias:
+### Required installations:
 
 - PostgreSQL
-    - Porta: 5432
+    - Port: 5432
     - Username: postgres
     - Password: postgres
 
 - Java
-    - Versão: 17
+    - Versions: 17
 
 ## API's
 
-### API's Authentication
-- registerUser: realiza o cadastro de um novo usuário na plataforma <br>
+### Authentication APIs - Users
+- register: performs the registration of a new user in the platform
   - POST http://localhost:8080/auth/register
-- login: realiza o login do usuário na plataforma
+- login: performs user login in the platform
   - POST http://localhost:8080/auth/login
-- createUserRole: atribui uma role em um usuário 
+
+### Authentication APIs - Roles
+- createUserRole: assigns a role to a user 
   - POST http://localhost:8080/auth/roles
-- getAllRoles: retorna todas as roles cadastradas 
+- getAll: returns all roles 
   - GET http://localhost:8080/role
 
-### API's Finance - Bank Account
-- retrieveAll: retorna todas as contas bancárias
+### Finance APIs - Bank Account
+- getAll: returns all bank accounts
   - GET http://localhost:8080/bank
-- create: realiza o cadastro de uma nova conta bancária
+- create: performs the registration of a new bank account
   - POST http://localhost:8080/bank
