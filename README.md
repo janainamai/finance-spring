@@ -14,18 +14,20 @@ Projeto criado para gerenciar as finanças de 2 pessoas, objetivando o estudo pr
 - Java
     - Versão: 17
 
+### API's
+
 <h3>API's Authentication</h3>
-- **registerUser** realiza o cadastro de um novo usuário na plataforma <br>
+- registerUser: realiza o cadastro de um novo usuário na plataforma <br>
   - POST http://localhost:8080/auth/register
-- **login** realiza o login do usuário na plataforma
+- login: realiza o login do usuário na plataforma
   - POST http://localhost:8080/auth/login
-- **createUserRole** atribui uma role em um usuário 
+- createUserRole: atribui uma role em um usuário 
   - POST http://localhost:8080/auth/roles
-- **getAllRoles** retorna todas as roles cadastradas 
+- getAllRoles: retorna todas as roles cadastradas 
   - GET http://localhost:8080/role
 
 <h3>API's Finance - Bank Account</h3>
-- **retrieveAll** retorna todas as contas bancárias
+- retrieveAll: retorna todas as contas bancárias
   - GET http://localhost:8080/bank
-- **create** realiza o cadastro de uma nova conta bancária
+- create: realiza o cadastro de uma nova conta bancária
   - POST http://localhost:8080/bank
