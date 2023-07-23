@@ -8,6 +8,7 @@ import br.com.finance.authentication.repositories.UserRepository;
 import br.com.finance.authentication.services.dto.CreateUserRoleDto;
 import br.com.finance.authentication.services.impl.UserRoleServiceImpl;
 import br.com.finance.authentication.utils.RoleConstants;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -38,6 +39,7 @@ class UserRoleServiceImplTest {
     private ArgumentCaptor<UserEntity> captorUser;
 
     @Test
+    @DisplayName("Should set the role on the specified user when both are found")
     void testSaveUserRoleWhenUserAndRolesWasFound() {
         UUID userId = UUID.randomUUID();
         UUID roleUserId = UUID.randomUUID();
@@ -70,6 +72,7 @@ class UserRoleServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should throw an exception when the user is not found.")
     void testSaveUserRoleWhenUserIsNotFound() {
         UUID userId = UUID.randomUUID();
         UUID roleUserId = UUID.randomUUID();
@@ -88,6 +91,7 @@ class UserRoleServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should throw an exception when the role is not found")
     void testSaveUserRoleWhenRolesWasNotFound() {
         UUID userId = UUID.randomUUID();
         UUID roleId = UUID.randomUUID();
@@ -105,6 +109,7 @@ class UserRoleServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should not throw an exception when the roles are found")
     void testFindAll() {
         List<RoleEntity> rolesFound = List.of(createRole("USER"), createRole("ADMIN"));
         when(roleRepository.findAll()).thenReturn(rolesFound);
@@ -114,6 +119,7 @@ class UserRoleServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should not throw an exception when the role is found")
     void testGetRoleByNameWhenItFound() {
         RoleEntity adminRole = new RoleEntity();
         adminRole.setName(RoleConstants.ADMIN);
@@ -125,6 +131,7 @@ class UserRoleServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should throw an exception when the role is not found")
     void testGetRoleByNameWhenItNotFound() {
         when(roleRepository.findByName(RoleConstants.ADMIN)).thenReturn(Optional.empty());
 

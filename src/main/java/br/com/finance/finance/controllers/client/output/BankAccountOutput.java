@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class BankAccountOutput {
 
+    private String id;
     private String name;
     private String description;
     private boolean active;
@@ -16,6 +17,7 @@ public class BankAccountOutput {
 
     public static BankAccountOutput fromDto(BankAccountDto dto) {
         BankAccountOutput output = new BankAccountOutput();
+        output.setId(dto.getId());
         output.setName(dto.getName());
         output.setDescription(dto.getDescription());
         output.setActive(dto.isActive());

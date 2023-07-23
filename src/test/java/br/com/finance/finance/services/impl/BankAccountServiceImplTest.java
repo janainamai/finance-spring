@@ -1,9 +1,11 @@
 package br.com.finance.finance.services.impl;
 
+import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,9 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,8 +34,10 @@ class BankAccountServiceImplTest {
     private BankAccountRepository repository;
     @Captor
     private ArgumentCaptor<BankAccountEntity> captorBank;
+
     @Test
-    void testRetrieveAllWhenFound() {
+    @DisplayName("Should return all records with their respective fields filled")
+    void testGetAllWhenFound() {
 
         BankAccountEntity blueAccount = new BankAccountEntity();
         blueAccount.setId(UUID.randomUUID());
@@ -49,7 +55,7 @@ class BankAccountServiceImplTest {
 
         when(repository.findAll()).thenReturn(List.of(greenAccount, blueAccount));
 
-        List<BankAccountDto> accounts = service.retrieveAll();
+        List<BankAccountDto> accounts = service.getAll();
 
         BankAccountDto blueAccountDto = new BankAccountDto();
         blueAccountDto.setName("Bank account blue");
@@ -66,19 +72,21 @@ class BankAccountServiceImplTest {
     }
 
     @Test
-    void testRetrieveAllWhenNotFound() {
+    @DisplayName("Should return an empty list when no results are found")
+    void testGetAllWhenNotFound() {
 
         when(repository.findAll()).thenReturn(Collections.emptyList());
 
-        List<BankAccountDto> accounts = service.retrieveAll();
+        List<BankAccountDto> accounts = service.getAll();
         assertThat(accounts).isEmpty();
     }
 
     @Test
+    @DisplayName("Should save the bank account in the database with the provided fields")
     void testCreate() {
         CreateBankAccountDto dto = new CreateBankAccountDto();
-        dto.setName("Blue account");
-        dto.setDescription("Blue description");
+        dto.setName("Bank account name");
+        dto.setDescription("Bank account description");
 
         service.create(dto);
 
@@ -87,8 +95,68 @@ class BankAccountServiceImplTest {
         BankAccountEntity savedBank = captorBank.getValue();
         assertThat(savedBank.getName()).isEqualTo(dto.getName());
         assertThat(savedBank.getDescription()).isEqualTo(dto.getDescription());
+    }
+
+    @Test
+    @DisplayName("Should save the bank account with an initial balance of zero")
+    void testCreateSavesBalanceZero() {
+        CreateBankAccountDto dto = new CreateBankAccountDto();
+        dto.setName("Bank account name");
+        dto.setDescription("Bank account description");
+
+        service.create(dto);
+
+        verify(repository).save(captorBank.capture());
+
+        BankAccountEntity savedBank = captorBank.getValue();
         assertThat(savedBank.getTotalBalance()).isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    @DisplayName("Should save the bank account with the status set to true")
+    void testCreateSavesActive() {
+        CreateBankAccountDto dto = new CreateBankAccountDto();
+        dto.setName("Bank account name");
+        dto.setDescription("Bank account description");
+
+        service.create(dto);
+
+        verify(repository).save(captorBank.capture());
+
+        BankAccountEntity savedBank = captorBank.getValue();
         assertThat(savedBank.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should return the found bank account")
+    void testGetByIdWhenFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        BankAccountEntity bankAccount = new BankAccountEntity();
+        bankAccount.setId(bankAccountId);
+        bankAccount.setName("Bank account name");
+        bankAccount.setDescription("Bank account description");
+        bankAccount.setTotalBalance(BigDecimal.TEN);
+        bankAccount.setActive(true);
+        when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccount));
+
+        BankAccountDto bankAccountDto = service.getById(bankAccountId);
+        assertThat(bankAccountDto.getName()).isEqualTo(bankAccount.getName());
+        assertThat(bankAccountDto.getDescription()).isEqualTo(bankAccount.getDescription());
+        assertThat(bankAccountDto.getTotalBalance()).isEqualTo(bankAccount.getTotalBalance());
+        assertThat(bankAccountDto.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
+    void testGetByIdWhenNotFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.getById(bankAccountId))
+                .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
     }
 
 }

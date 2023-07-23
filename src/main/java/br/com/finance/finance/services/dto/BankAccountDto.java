@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class BankAccountDto {
 
+    private String id;
     private String name;
     private String description;
     private boolean active;
@@ -16,10 +17,11 @@ public class BankAccountDto {
 
     public static BankAccountDto fromEntity(BankAccountEntity entity) {
         BankAccountDto dto = new BankAccountDto();
+        dto.setId(entity.getId().toString());
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
-        dto.setActive(entity.isActive());
         dto.setTotalBalance(entity.getTotalBalance());
+        dto.setActive(entity.isActive());
 
         return dto;
     }

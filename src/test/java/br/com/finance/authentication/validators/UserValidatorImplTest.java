@@ -2,6 +2,7 @@ package br.com.finance.authentication.validators;
 
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.authentication.repositories.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,11 +22,13 @@ class UserValidatorImplTest {
     private UserRepository userRepository;
 
     @Test
+    @DisplayName("Should not throw an exception when the passwords are the same")
     void testValidateSamePassword() {
         assertThatCode(() -> validator.validateSamePassword("password1", "password1")).doesNotThrowAnyException();
     }
 
     @Test
+    @DisplayName("Should throw an exception when the passwords are not the same")
     void testValidateSamePasswordWhenItsDifferent() {
         assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> validator.validateSamePassword("password1", "password2"))
@@ -33,6 +36,7 @@ class UserValidatorImplTest {
     }
 
     @Test
+    @DisplayName("Should not throw an exception when the user is found")
     void testValidateUsernameAlreadyExists() {
         String username = "janainamai";
 
@@ -42,6 +46,7 @@ class UserValidatorImplTest {
     }
 
     @Test
+    @DisplayName("Should throw an exception when the user is not found")
     void testValidateUsernameAlreadyExistsWhenUsernameAlreadyExists() {
         String username = "janainamai";
 

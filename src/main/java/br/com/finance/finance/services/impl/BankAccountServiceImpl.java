@@ -1,5 +1,6 @@
 package br.com.finance.finance.services.impl;
 
+import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
 import br.com.finance.finance.services.BankAccountService;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -20,7 +22,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BankAccountDto> retrieveAll() {
+    public List<BankAccountDto> getAll() {
         List<BankAccountEntity> bankAccounts = repository.findAll();
 
         return BankAccountDto.fromEntities(bankAccounts);
@@ -36,6 +38,14 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccount.setActive(true);
 
         repository.save(bankAccount);
+    }
+
+    @Override
+    public BankAccountDto getById(UUID bankAccountId) {
+        BankAccountEntity bankAccount = repository.findById(bankAccountId)
+                .orElseThrow(() -> new BadRequestException("Bank account not found with id ".concat(bankAccountId.toString())));
+
+        return BankAccountDto.fromEntity(bankAccount);
     }
 
 }

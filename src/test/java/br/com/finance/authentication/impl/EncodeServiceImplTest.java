@@ -1,6 +1,7 @@
 package br.com.finance.authentication.impl;
 
 import br.com.finance.authentication.services.impl.EncodeServiceImpl;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +16,7 @@ class EncodeServiceImplTest {
     private EncodeServiceImpl service;
 
     @Test
+    @DisplayName("Should encrypt the received password")
     void testEncode() {
         String password = "password123";
 
