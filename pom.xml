@@ -24,6 +24,7 @@
 		<version-java-jwt>4.4.0</version-java-jwt>
 		<version-snakeyaml>2.0</version-snakeyaml>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
