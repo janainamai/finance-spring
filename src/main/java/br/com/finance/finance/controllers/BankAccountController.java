@@ -1,7 +1,6 @@
 package br.com.finance.finance.controllers;
 
 import br.com.finance.finance.controllers.client.input.CreateBankAccountInput;
-import br.com.finance.finance.controllers.client.output.BankAccountOutput;
 import br.com.finance.finance.services.BankAccountService;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.utils.FinanceUtils;
@@ -21,10 +20,10 @@ public class BankAccountController {
     private BankAccountService service;
 
     @GetMapping
-    public ResponseEntity<List<BankAccountOutput>> getAll() {
+    public ResponseEntity<List<BankAccountDto>> getAll() {
         List<BankAccountDto> accounts = service.getAll();
 
-        return ResponseEntity.ok(BankAccountOutput.fromDtos(accounts));
+        return ResponseEntity.ok(accounts);
     }
 
     @PostMapping
