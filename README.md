@@ -35,3 +35,5 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
   - GET http://localhost:8080/bank/{id}
 - create: performs the registration of a new bank account
   - POST http://localhost:8080/bank
+- update: performs the update of a existing bank account
+  - PUT http://localhost:8080/bank

@@ -6,6 +6,7 @@ import br.com.finance.finance.repositories.BankAccountRepository;
 import br.com.finance.finance.services.BankAccountService;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
+import br.com.finance.finance.services.dto.UpdateBankAccountDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,19 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccount.setDescription(dto.getDescription());
         bankAccount.setTotalBalance(BigDecimal.ZERO);
         bankAccount.setActive(true);
+
+        repository.save(bankAccount);
+    }
+
+    @Override
+    @Transactional
+    public void update(UpdateBankAccountDto dto) {
+        BankAccountEntity bankAccount = repository.findById(UUID.fromString(dto.getId()))
+                .orElseThrow(() -> new BadRequestException("Bank account not found with id ".concat(dto.getId())));
+
+        bankAccount.setName(dto.getName());
+        bankAccount.setDescription(dto.getDescription());
+        bankAccount.setActive(dto.getActive());
 
         repository.save(bankAccount);
     }

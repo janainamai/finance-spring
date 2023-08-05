@@ -5,6 +5,7 @@ import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
+import br.com.finance.finance.services.dto.UpdateBankAccountDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -125,6 +126,49 @@ class BankAccountServiceImplTest {
 
         BankAccountEntity savedBank = captorBank.getValue();
         assertThat(savedBank.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should update the bank account in the database with the provided fields")
+    void testUpdate() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        UpdateBankAccountDto dto = new UpdateBankAccountDto();
+        dto.setId(bankAccountId.toString());
+        dto.setName("Bank account name updated");
+        dto.setDescription("Bank account description updated");
+        dto.setActive(false);
+
+        BankAccountEntity currentBankAccount = new BankAccountEntity();
+        currentBankAccount.setId(bankAccountId);
+        currentBankAccount.setName("Bank account name");
+        currentBankAccount.setDescription("Bank account description");
+        currentBankAccount.setActive(true);
+        when(repository.findById(UUID.fromString(dto.getId()))).thenReturn(Optional.of(currentBankAccount));
+
+        service.update(dto);
+
+        verify(repository).save(captorBank.capture());
+
+        BankAccountEntity updatedBank = captorBank.getValue();
+        assertThat(updatedBank.getId()).hasToString(dto.getId());
+        assertThat(updatedBank.getName()).isEqualTo(dto.getName());
+        assertThat(updatedBank.getDescription()).isEqualTo(dto.getDescription());
+        assertThat(updatedBank.isActive()).isFalse();
+        assertThat(updatedBank.getTotalBalance()).isEqualTo(currentBankAccount.getTotalBalance());
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
+    void testUpdateWhenNotFound() {
+        UpdateBankAccountDto dto = new UpdateBankAccountDto();
+        dto.setId(UUID.randomUUID().toString());
+
+        when(repository.findById(UUID.fromString(dto.getId()))).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.update(dto))
+                .withMessage("Bank account not found with id ".concat(dto.getId()));
     }
 
     @Test

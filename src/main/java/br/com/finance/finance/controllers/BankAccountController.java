@@ -1,6 +1,7 @@
 package br.com.finance.finance.controllers;
 
 import br.com.finance.finance.controllers.client.input.CreateBankAccountInput;
+import br.com.finance.finance.controllers.client.input.UpdateBankAccountInput;
 import br.com.finance.finance.services.BankAccountService;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.utils.FinanceUtils;
@@ -31,6 +32,13 @@ public class BankAccountController {
         service.create(input.toDto());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> update(@Valid @RequestBody UpdateBankAccountInput input) {
+        service.update(input.toDto());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
