@@ -23,8 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BankAccountServiceImplTest {
@@ -59,12 +58,14 @@ class BankAccountServiceImplTest {
         List<BankAccountDto> accounts = service.getAll();
 
         BankAccountDto blueAccountDto = new BankAccountDto();
+        blueAccountDto.setId(blueAccount.getId().toString());
         blueAccountDto.setName("Bank account blue");
         blueAccountDto.setDescription("Description of blue bank account");
         blueAccountDto.setTotalBalance(BigDecimal.valueOf(250.65));
         blueAccountDto.setActive(true);
 
         BankAccountDto greenAccountDto = new BankAccountDto();
+        greenAccountDto.setId(greenAccount.getId().toString());
         greenAccountDto.setName("Bank account green");
         greenAccountDto.setDescription("Description of green bank account");
         greenAccountDto.setTotalBalance(BigDecimal.valueOf(-100.65));
@@ -184,7 +185,7 @@ class BankAccountServiceImplTest {
         bankAccount.setActive(true);
         when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccount));
 
-        BankAccountDto bankAccountDto = service.getById(bankAccountId);
+        BankAccountDto bankAccountDto = service.getById(bankAccountId.toString());
         assertThat(bankAccountDto.getName()).isEqualTo(bankAccount.getName());
         assertThat(bankAccountDto.getDescription()).isEqualTo(bankAccount.getDescription());
         assertThat(bankAccountDto.getTotalBalance()).isEqualTo(bankAccount.getTotalBalance());
@@ -199,8 +200,84 @@ class BankAccountServiceImplTest {
         when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> service.getById(bankAccountId))
+                .isThrownBy(() -> service.getById(bankAccountId.toString()))
                 .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
+    }
+
+    @Test
+    @DisplayName("Should update the activate field of bank account of received identifier")
+    void testDeactivateWhenFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        BankAccountEntity bankAccount = new BankAccountEntity();
+        bankAccount.setId(bankAccountId);
+        bankAccount.setName("Bank account name");
+        bankAccount.setDescription("Bank account description");
+        bankAccount.setTotalBalance(BigDecimal.TEN);
+        bankAccount.setActive(true);
+        when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccount));
+
+        service.deactivate(bankAccountId.toString());
+
+        verify(repository).save(captorBank.capture());
+
+        BankAccountEntity savedBankAccount = captorBank.getValue();
+        assertThat(savedBankAccount.getName()).isEqualTo(bankAccount.getName());
+        assertThat(savedBankAccount.getDescription()).isEqualTo(bankAccount.getDescription());
+        assertThat(savedBankAccount.getTotalBalance()).isEqualTo(bankAccount.getTotalBalance());
+        assertThat(savedBankAccount.isActive()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
+    void testDeactivateWhenNotFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.deactivate(bankAccountId.toString()))
+                        .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
+
+        verify(repository, times(0)).save(any());
+    }
+
+    @Test
+    @DisplayName("Should update the activate field of bank account of received identifier")
+    void testActivateWhenFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        BankAccountEntity bankAccount = new BankAccountEntity();
+        bankAccount.setId(bankAccountId);
+        bankAccount.setName("Bank account name");
+        bankAccount.setDescription("Bank account description");
+        bankAccount.setTotalBalance(BigDecimal.TEN);
+        bankAccount.setActive(true);
+        when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccount));
+
+        service.activate(bankAccountId.toString());
+
+        verify(repository).save(captorBank.capture());
+
+        BankAccountEntity savedBankAccount = captorBank.getValue();
+        assertThat(savedBankAccount.getName()).isEqualTo(bankAccount.getName());
+        assertThat(savedBankAccount.getDescription()).isEqualTo(bankAccount.getDescription());
+        assertThat(savedBankAccount.getTotalBalance()).isEqualTo(bankAccount.getTotalBalance());
+        assertThat(savedBankAccount.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
+    void testActivateWhenNotFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.activate(bankAccountId.toString()))
+                .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
+
+        verify(repository, times(0)).save(any());
     }
 
 }

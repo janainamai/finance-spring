@@ -5,14 +5,18 @@ import br.com.finance.finance.services.dto.CreateBankAccountDto;
 import br.com.finance.finance.services.dto.UpdateBankAccountDto;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface BankAccountService {
+
     List<BankAccountDto> getAll();
 
     void create(CreateBankAccountDto dto);
 
-    BankAccountDto getById(UUID uuid);
+    BankAccountDto getById(String id);
 
     void update(UpdateBankAccountDto dto);
+
+    void deactivate(String id);
+
+    void activate(String id);
 }

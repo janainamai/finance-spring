@@ -4,7 +4,6 @@ import br.com.finance.finance.controllers.client.input.CreateBankAccountInput;
 import br.com.finance.finance.controllers.client.input.UpdateBankAccountInput;
 import br.com.finance.finance.services.BankAccountService;
 import br.com.finance.finance.services.dto.BankAccountDto;
-import br.com.finance.finance.utils.FinanceUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,9 +40,23 @@ public class BankAccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping("/deactivate/{id}")
+    public ResponseEntity<BankAccountDto> deactivate(@PathVariable String id) {
+         service.deactivate(id);
+
+         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/activate/{id}")
+    public ResponseEntity<BankAccountDto> activate(@PathVariable String id) {
+        service.activate(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<BankAccountDto> getById(@PathVariable String id) {
-        BankAccountDto bankAccount = service.getById(FinanceUtils.stringToUUID(id));
+        BankAccountDto bankAccount = service.getById(id);
 
         return ResponseEntity.ok(bankAccount);
     }
