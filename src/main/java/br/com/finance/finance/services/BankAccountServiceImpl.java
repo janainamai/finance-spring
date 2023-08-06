@@ -1,9 +1,9 @@
-package br.com.finance.finance.services.impl;
+package br.com.finance.finance.services;
 
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
-import br.com.finance.finance.services.BankAccountService;
+import br.com.finance.finance.services.interfaces.BankAccountService;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
 import br.com.finance.finance.services.dto.UpdateBankAccountDto;
@@ -72,10 +72,17 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountDto getById(String bankAccountId) {
+    @Transactional(readOnly = true)
+    public BankAccountDto getDtoById(String bankAccountId) {
         BankAccountEntity bankAccount = findByIdOrThrowObjectNotFound(bankAccountId);
 
         return BankAccountDto.fromEntity(bankAccount);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BankAccountEntity getEntityById(String bankAccountId) {
+        return findByIdOrThrowObjectNotFound(bankAccountId);
     }
 
     private BankAccountEntity findByIdOrThrowObjectNotFound(String id) {

@@ -37,3 +37,13 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
   - POST http://localhost:8080/bank
 - update: performs the update of a existing bank account
   - PUT http://localhost:8080/bank
+- deactivate: deactivate a existing bank account
+  - PUT http://localhost:8080/bank/deactivate/{id}
+- activate: activate a existing bank account
+  - PUT http://localhost:8080/bank/activate/{id}
+
+### Finance APIs - Transaction
+- getById: returns the transaction with the given id
+  - GET http://localhost:8080/transaction/{id}
+- create: performs the registration of a new transaction
+  - POST http://localhost:8080/transaction

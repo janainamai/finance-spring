@@ -32,17 +32,26 @@ public class SecurityConfigurations {
                     configureAuth(authorize);
                     configureRole(authorize);
                     configureBank(authorize);
+                    configureTransaction(authorize);
                     authorize.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
+    private void configureTransaction(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize
+                .requestMatchers(HttpMethod.GET, "/transaction").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.POST, "/transaction").hasRole(RoleConstants.ADMIN);
+    }
+
     private void configureBank(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
         authorize
                 .requestMatchers(HttpMethod.GET, "/bank").hasRole(RoleConstants.ADMIN)
                 .requestMatchers(HttpMethod.POST, "/bank").hasRole(RoleConstants.ADMIN)
-                .requestMatchers(HttpMethod.PUT, "/bank").hasRole(RoleConstants.ADMIN);
+                .requestMatchers(HttpMethod.PUT, "/bank").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.PATCH, "/bank/deactivate").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.PATCH, "/bank/activate").hasRole(RoleConstants.ADMIN);
     }
 
     private void configureRole(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {

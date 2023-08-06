@@ -2,7 +2,7 @@ package br.com.finance.finance.controllers;
 
 import br.com.finance.finance.controllers.client.input.CreateBankAccountInput;
 import br.com.finance.finance.controllers.client.input.UpdateBankAccountInput;
-import br.com.finance.finance.services.BankAccountService;
+import br.com.finance.finance.services.interfaces.BankAccountService;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class BankAccountController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BankAccountDto> getById(@PathVariable String id) {
-        BankAccountDto bankAccount = service.getById(id);
+        BankAccountDto bankAccount = service.getDtoById(id);
 
         return ResponseEntity.ok(bankAccount);
     }

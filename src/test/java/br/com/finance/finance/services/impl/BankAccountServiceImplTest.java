@@ -3,6 +3,7 @@ package br.com.finance.finance.services.impl;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
+import br.com.finance.finance.services.BankAccountServiceImpl;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
 import br.com.finance.finance.services.dto.UpdateBankAccountDto;
@@ -174,7 +175,7 @@ class BankAccountServiceImplTest {
 
     @Test
     @DisplayName("Should return the found bank account")
-    void testGetByIdWhenFound() {
+    void testGetDtoByIdWhenFound() {
         UUID bankAccountId = UUID.randomUUID();
 
         BankAccountEntity bankAccount = new BankAccountEntity();
@@ -182,25 +183,61 @@ class BankAccountServiceImplTest {
         bankAccount.setName("Bank account name");
         bankAccount.setDescription("Bank account description");
         bankAccount.setTotalBalance(BigDecimal.TEN);
+        bankAccount.setVersion(5L);
         bankAccount.setActive(true);
         when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccount));
 
-        BankAccountDto bankAccountDto = service.getById(bankAccountId.toString());
+        BankAccountDto bankAccountDto = service.getDtoById(bankAccountId.toString());
         assertThat(bankAccountDto.getName()).isEqualTo(bankAccount.getName());
         assertThat(bankAccountDto.getDescription()).isEqualTo(bankAccount.getDescription());
         assertThat(bankAccountDto.getTotalBalance()).isEqualTo(bankAccount.getTotalBalance());
+        assertThat(bankAccountDto.getVersion()).isEqualTo(bankAccount.getVersion());
         assertThat(bankAccountDto.isActive()).isTrue();
     }
 
     @Test
     @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
-    void testGetByIdWhenNotFound() {
+    void testGetDtoByIdWhenNotFound() {
         UUID bankAccountId = UUID.randomUUID();
 
         when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> service.getById(bankAccountId.toString()))
+                .isThrownBy(() -> service.getEntityById(bankAccountId.toString()))
+                .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
+    }
+
+    @Test
+    @DisplayName("Should return the found bank account")
+    void testGetEntityByIdWhenFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        BankAccountEntity bankAccount = new BankAccountEntity();
+        bankAccount.setId(bankAccountId);
+        bankAccount.setName("Bank account name");
+        bankAccount.setDescription("Bank account description");
+        bankAccount.setTotalBalance(BigDecimal.TEN);
+        bankAccount.setVersion(5L);
+        bankAccount.setActive(true);
+        when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccount));
+
+        BankAccountEntity bankAccountEntity = service.getEntityById(bankAccountId.toString());
+        assertThat(bankAccountEntity.getName()).isEqualTo(bankAccount.getName());
+        assertThat(bankAccountEntity.getDescription()).isEqualTo(bankAccount.getDescription());
+        assertThat(bankAccountEntity.getTotalBalance()).isEqualTo(bankAccount.getTotalBalance());
+        assertThat(bankAccountEntity.getVersion()).isEqualTo(bankAccount.getVersion());
+        assertThat(bankAccountEntity.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
+    void testGetEntityByIdWhenNotFound() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.getEntityById(bankAccountId.toString()))
                 .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
     }
 

@@ -1,6 +1,6 @@
 package br.com.finance.finance.domain.entities;
 
-import br.com.finance.authentication.domain.enums.EnumTransactionType;
+import br.com.finance.finance.domain.enums.EnumTransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity(name = "transaction")
@@ -35,11 +36,11 @@ public class TransactionEntity {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "event_date", nullable = false)
-    private Date eventDate;
+    private LocalDate eventDate;
 
     @Temporal(TemporalType.TIME)
     @Column(name = "event_time", nullable = false)
-    private Date eventTime;
+    private LocalTime eventTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_account_id", nullable = false)

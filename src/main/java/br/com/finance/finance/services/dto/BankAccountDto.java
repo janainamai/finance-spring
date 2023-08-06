@@ -14,6 +14,7 @@ public class BankAccountDto {
     private String description;
     private boolean active;
     private BigDecimal totalBalance;
+    private Long version;
 
     public static BankAccountDto fromEntity(BankAccountEntity entity) {
         BankAccountDto dto = new BankAccountDto();
@@ -22,6 +23,7 @@ public class BankAccountDto {
         dto.setDescription(entity.getDescription());
         dto.setTotalBalance(entity.getTotalBalance());
         dto.setActive(entity.isActive());
+        dto.setVersion(entity.getVersion());
 
         return dto;
     }

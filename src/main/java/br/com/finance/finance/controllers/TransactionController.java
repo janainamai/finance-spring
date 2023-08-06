@@ -1,0 +1,37 @@
+package br.com.finance.finance.controllers;
+
+import br.com.finance.finance.controllers.client.input.TransactionInput;
+import br.com.finance.finance.services.interfaces.TransactionService;
+import br.com.finance.finance.services.dto.TransactionDto;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/transaction")
+public class TransactionController {
+
+    @Autowired
+    private TransactionService service;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionDto> getById(@PathVariable String id) {
+        TransactionDto transaction = service.getById(id);
+
+        return ResponseEntity.ok(transaction);
+    }
+
+    // todo getByFilters(RetrieveTransactionInput input)
+
+    @PostMapping()
+    public ResponseEntity<Void> create(@Valid @RequestBody TransactionInput input) {
+        service.create(input.toDto());
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    // todo BigDecimal deleteById(String id)
+
+}

@@ -33,4 +33,7 @@ public class BankAccountEntity {
     @Column(name = "active", columnDefinition = "boolean default true")
     private boolean active;
 
+    @Version
+    private Long version;
+
 }

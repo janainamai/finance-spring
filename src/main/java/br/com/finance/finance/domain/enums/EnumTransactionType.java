@@ -1,4 +1,4 @@
-package br.com.finance.authentication.domain.enums;
+package br.com.finance.finance.domain.enums;
 
 public enum EnumTransactionType {
 
