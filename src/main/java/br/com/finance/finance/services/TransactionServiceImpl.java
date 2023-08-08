@@ -1,15 +1,19 @@
 package br.com.finance.finance.services;
 
 import br.com.finance.authentication.infra.exception.BadRequestException;
-import br.com.finance.finance.components.interfaces.TransactionComponent;
+import br.com.finance.finance.components.factory.TransactionComponentFactory;
 import br.com.finance.finance.domain.entities.TransactionEntity;
 import br.com.finance.finance.repositories.TransactionRepository;
-import br.com.finance.finance.services.interfaces.TransactionService;
 import br.com.finance.finance.services.dto.TransactionDto;
+import br.com.finance.finance.services.interfaces.BankAccountService;
+import br.com.finance.finance.services.interfaces.TransactionService;
 import br.com.finance.finance.utils.FinanceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static br.com.finance.finance.utils.FinanceConstants.INTEGER_TWO;
+import static java.math.RoundingMode.HALF_UP;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -17,7 +21,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
-    private TransactionComponent transactionComponent;
+    private TransactionComponentFactory transactionComponentFactory;
+    @Autowired
+    private BankAccountService bankAccountService;
 
     @Override
     @Transactional(readOnly = true)
@@ -30,8 +36,22 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public void create(TransactionDto dto) {
-        TransactionEntity transactionEntity = transactionComponent.saveTransaction(dto);
-        transactionComponent.updateTransactionValueInBankAccount(transactionEntity, dto.getBankAccountId());
+        TransactionEntity savedTransaction = this.saveTransaction(dto);
+
+        transactionComponentFactory.getStrategy(dto.getTransactionType())
+                .updateTransactionValueInBankAccount(savedTransaction.getAmount(), dto.getBankAccountId());
+    }
+
+    private TransactionEntity saveTransaction(TransactionDto dto) {
+        TransactionEntity transaction = new TransactionEntity();
+        transaction.setDescription(dto.getDescription());
+        transaction.setAmount(dto.getAmount().setScale(INTEGER_TWO, HALF_UP));
+        transaction.setTransactionType(dto.getTransactionType());
+        transaction.setEventDate(dto.getEventDate());
+        transaction.setEventTime(dto.getEventTime());
+        transaction.setBankAccount(bankAccountService.getEntityById(dto.getBankAccountId()));
+
+        return transactionRepository.save(transaction);
     }
 
     private TransactionEntity findByIdOrThrowObjectNotFound(String id) {

@@ -1,12 +1,11 @@
 package br.com.finance.finance.components.interfaces;
 
-import br.com.finance.finance.domain.entities.TransactionEntity;
-import br.com.finance.finance.services.dto.TransactionDto;
+import br.com.finance.finance.domain.enums.EnumTransactionType;
 
-public interface TransactionComponent {
+import java.math.BigDecimal;
 
-    TransactionEntity saveTransaction(TransactionDto dto);
+public interface TransactionComponent extends TransactionStrategy<EnumTransactionType> {
 
-    void updateTransactionValueInBankAccount(TransactionEntity transactionEntity, String bankAccountId);
+    void updateTransactionValueInBankAccount(BigDecimal amount, String bankAccountId);
 
 }

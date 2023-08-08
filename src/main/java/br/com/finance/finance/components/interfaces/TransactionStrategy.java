@@ -1,13 +1,7 @@
 package br.com.finance.finance.components.interfaces;
 
-import br.com.finance.finance.domain.enums.EnumTransactionType;
+public interface TransactionStrategy<T> {
 
-import java.math.BigDecimal;
-
-public interface TransactionStrategy {
-
-    EnumTransactionType getTransactionType();
-
-    void updateTransactionValueInBankAccount(BigDecimal amount, String bankAccountId);
+    T getStrategyName();
 
 }

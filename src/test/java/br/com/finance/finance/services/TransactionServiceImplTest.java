@@ -1,20 +1,28 @@
 package br.com.finance.finance.services;
 
 import br.com.finance.authentication.infra.exception.BadRequestException;
-import br.com.finance.finance.components.interfaces.TransactionComponent;
+import br.com.finance.finance.components.CreditTransactionImpl;
+import br.com.finance.finance.components.DebitTransactionImpl;
+import br.com.finance.finance.components.factory.TransactionComponentFactory;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.domain.entities.TransactionEntity;
 import br.com.finance.finance.domain.enums.EnumTransactionType;
 import br.com.finance.finance.repositories.TransactionRepository;
 import br.com.finance.finance.services.dto.TransactionDto;
+import br.com.finance.finance.services.interfaces.BankAccountService;
+import br.com.finance.finance.utils.FinanceConstants;
+import lombok.Getter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -22,8 +30,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTest {
@@ -33,7 +41,16 @@ class TransactionServiceImplTest {
     @Mock
     private TransactionRepository transactionRepository;
     @Mock
-    private TransactionComponent transactionComponent;
+    private TransactionComponentFactory transactionComponentFactory;
+    @Mock
+    private DebitTransactionImpl debitTransaction;
+    @Mock
+    private CreditTransactionImpl creditTransaction;
+    @Mock
+    private BankAccountService bankAccountService;
+    @Getter
+    @Captor
+    private ArgumentCaptor<TransactionEntity> captorTransaction;
 
     @Test
     @DisplayName("Should return the found transaction")
@@ -76,20 +93,78 @@ class TransactionServiceImplTest {
                 .withMessage("Transaction not found with id ".concat(transactionId.toString()));
     }
 
-    @Test
     @DisplayName("Should save the transaction and update value in bank account")
-    void testCreate() {
+    @Test
+    void testCreateWhenDebit() {
         TransactionDto dto = new TransactionDto();
         dto.setId(UUID.randomUUID().toString());
+        dto.setDescription("Transaction description");
+        dto.setTransactionType(EnumTransactionType.DEBIT);
+        dto.setAmount(BigDecimal.TEN);
+        dto.setEventDate(LocalDate.now());
+        dto.setEventTime(LocalTime.now());
         dto.setBankAccountId(UUID.randomUUID().toString());
 
-        TransactionEntity transactionEntity = new TransactionEntity();
-        when(transactionComponent.saveTransaction(dto)).thenReturn(transactionEntity);
+        BankAccountEntity bankAccountEntity = new BankAccountEntity();
+        bankAccountEntity.setId(UUID.fromString(dto.getBankAccountId()));
+        when(bankAccountService.getEntityById(dto.getBankAccountId())).thenReturn(bankAccountEntity);
+
+        TransactionEntity savedTransaction = new TransactionEntity();
+        savedTransaction.setAmount(dto.getAmount().setScale(FinanceConstants.INTEGER_TWO, RoundingMode.HALF_UP));
+        when(transactionRepository.save(any())).thenReturn(savedTransaction);
+
+        when(transactionComponentFactory.getStrategy(dto.getTransactionType())).thenReturn(debitTransaction);
 
         service.create(dto);
 
-        verify(transactionComponent).saveTransaction(dto);
-        verify(transactionComponent).updateTransactionValueInBankAccount(transactionEntity, dto.getBankAccountId());
+        verify(transactionRepository).save(captorTransaction.capture());
+        TransactionEntity transactionEntity = captorTransaction.getValue();
+        assertThat(transactionEntity.getDescription()).isEqualTo(dto.getDescription());
+        assertThat(transactionEntity.getTransactionType()).isEqualTo(dto.getTransactionType());
+        assertThat(transactionEntity.getAmount()).isEqualTo(dto.getAmount().setScale(FinanceConstants.INTEGER_TWO, RoundingMode.HALF_UP));
+        assertThat(transactionEntity.getEventDate()).isEqualTo(dto.getEventDate());
+        assertThat(transactionEntity.getEventTime()).isEqualTo(dto.getEventTime());
+        assertThat(transactionEntity.getBankAccount().getId()).hasToString(dto.getBankAccountId());
+
+        verify(debitTransaction).updateTransactionValueInBankAccount(savedTransaction.getAmount(), dto.getBankAccountId());
+        verify(creditTransaction, times(0)).updateTransactionValueInBankAccount(savedTransaction.getAmount(), dto.getBankAccountId());
+    }
+
+    @DisplayName("Should save the transaction and update value in bank account")
+    @Test
+    void testCreateWhenCredit() {
+        TransactionDto dto = new TransactionDto();
+        dto.setId(UUID.randomUUID().toString());
+        dto.setDescription("Transaction description");
+        dto.setTransactionType(EnumTransactionType.CREDIT);
+        dto.setAmount(BigDecimal.TEN);
+        dto.setEventDate(LocalDate.now());
+        dto.setEventTime(LocalTime.now());
+        dto.setBankAccountId(UUID.randomUUID().toString());
+
+        BankAccountEntity bankAccountEntity = new BankAccountEntity();
+        bankAccountEntity.setId(UUID.fromString(dto.getBankAccountId()));
+        when(bankAccountService.getEntityById(dto.getBankAccountId())).thenReturn(bankAccountEntity);
+
+        TransactionEntity savedTransaction = new TransactionEntity();
+        savedTransaction.setAmount(dto.getAmount().setScale(FinanceConstants.INTEGER_TWO, RoundingMode.HALF_UP));
+        when(transactionRepository.save(any())).thenReturn(savedTransaction);
+
+        when(transactionComponentFactory.getStrategy(dto.getTransactionType())).thenReturn(creditTransaction);
+
+        service.create(dto);
+
+        verify(transactionRepository).save(captorTransaction.capture());
+        TransactionEntity transactionEntity = captorTransaction.getValue();
+        assertThat(transactionEntity.getDescription()).isEqualTo(dto.getDescription());
+        assertThat(transactionEntity.getTransactionType()).isEqualTo(dto.getTransactionType());
+        assertThat(transactionEntity.getAmount()).isEqualTo(dto.getAmount().setScale(FinanceConstants.INTEGER_TWO, RoundingMode.HALF_UP));
+        assertThat(transactionEntity.getEventDate()).isEqualTo(dto.getEventDate());
+        assertThat(transactionEntity.getEventTime()).isEqualTo(dto.getEventTime());
+        assertThat(transactionEntity.getBankAccount().getId()).hasToString(dto.getBankAccountId());
+
+        verify(creditTransaction).updateTransactionValueInBankAccount(savedTransaction.getAmount(), dto.getBankAccountId());
+        verify(debitTransaction, times(0)).updateTransactionValueInBankAccount(savedTransaction.getAmount(), dto.getBankAccountId());
     }
 
 }

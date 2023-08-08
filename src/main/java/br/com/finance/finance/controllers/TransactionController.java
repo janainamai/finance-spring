@@ -1,8 +1,8 @@
 package br.com.finance.finance.controllers;
 
-import br.com.finance.finance.controllers.client.input.TransactionInput;
-import br.com.finance.finance.services.interfaces.TransactionService;
+import br.com.finance.finance.controllers.client.input.CreateTransactionInput;
 import br.com.finance.finance.services.dto.TransactionDto;
+import br.com.finance.finance.services.interfaces.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class TransactionController {
     // todo getByFilters(RetrieveTransactionInput input)
 
     @PostMapping()
-    public ResponseEntity<Void> create(@Valid @RequestBody TransactionInput input) {
+    public ResponseEntity<Void> create(@Valid @RequestBody CreateTransactionInput input) {
         service.create(input.toDto());
 
         return new ResponseEntity<>(HttpStatus.CREATED);

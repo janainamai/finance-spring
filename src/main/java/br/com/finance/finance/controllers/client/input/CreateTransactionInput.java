@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class TransactionInput {
+public class CreateTransactionInput {
 
     @NotBlank(message = "description is required")
     private String description;
