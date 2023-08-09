@@ -6,6 +6,7 @@ import br.com.finance.finance.domain.enums.EnumTransactionType;
 import br.com.finance.finance.repositories.BankAccountRepository;
 import br.com.finance.finance.services.interfaces.BankAccountService;
 import br.com.finance.finance.utils.FinanceConstants;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -44,6 +45,10 @@ public class DebitTransactionImpl implements TransactionComponent {
             } catch (ObjectOptimisticLockingFailureException exception) {
                 attempts++;
             }
+        }
+
+        if (FinanceConstants.INTEGER_FIVE == attempts) {
+            throw new ServiceException("Unable to update transaction amount in bank account, please try again");
         }
     }
 
