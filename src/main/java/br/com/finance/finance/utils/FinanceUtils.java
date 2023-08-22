@@ -8,11 +8,19 @@ import java.util.UUID;
 @UtilityClass
 public class FinanceUtils {
 
-    public static UUID stringToUUID(String id) {
+    public static UUID stringToUuidOrThrowException(String id) {
         try {
             return UUID.fromString(id);
         } catch (Exception e) {
             throw new BadRequestException("Invalid id");
+        }
+    }
+
+    public static UUID stringToUuidOrNull(String id) {
+        try {
+            return UUID.fromString(id);
+        } catch (Exception e) {
+            return null;
         }
     }
 

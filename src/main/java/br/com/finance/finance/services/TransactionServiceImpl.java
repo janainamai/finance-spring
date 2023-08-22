@@ -4,11 +4,13 @@ import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.components.factory.TransactionComponentFactory;
 import br.com.finance.finance.domain.entities.TransactionEntity;
 import br.com.finance.finance.repositories.TransactionRepository;
+import br.com.finance.finance.services.dto.FilterTransactionDto;
 import br.com.finance.finance.services.dto.TransactionDto;
 import br.com.finance.finance.services.interfaces.BankAccountService;
 import br.com.finance.finance.services.interfaces.TransactionService;
 import br.com.finance.finance.utils.FinanceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,19 @@ public class TransactionServiceImpl implements TransactionService {
                 .updateTransactionValueInBankAccount(savedTransaction.getAmount(), dto.getBankAccountId());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TransactionDto> getAllByFilters(FilterTransactionDto dto) {
+        Page<TransactionEntity> transactionsPage = transactionRepository.findAllByFilters(
+                dto.getStartDate(),
+                dto.getEndDate(),
+                FinanceUtils.stringToUuidOrNull(dto.getBankAccountId()),
+                dto.getTransactionType(),
+                dto.getPageable());
+
+        return transactionsPage.map(TransactionDto::fromEntity);
+    }
+
     private TransactionEntity saveTransaction(TransactionDto dto) {
         TransactionEntity transaction = new TransactionEntity();
         transaction.setDescription(dto.getDescription());
@@ -55,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private TransactionEntity findByIdOrThrowObjectNotFound(String id) {
-        return transactionRepository.findById(FinanceUtils.stringToUUID(id))
+        return transactionRepository.findById(FinanceUtils.stringToUuidOrThrowException(id))
                 .orElseThrow(() -> new BadRequestException("Transaction not found with id ".concat(id)));
     }
 

@@ -17,7 +17,7 @@ class FinanceUtilsTest {
     void testStringToUUID() {
         String id = "e1947397-2b3a-4bc8-aa84-dee2dd0b14cb";
 
-        UUID uuid = FinanceUtils.stringToUUID(id);
+        UUID uuid = FinanceUtils.stringToUuidOrThrowException(id);
 
         assertThat(uuid).hasToString(id);
     }

@@ -45,5 +45,7 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
 ### Finance APIs - Transaction
 - getById: returns the transaction with the given id
   - GET http://localhost:8080/transaction/{id}
+- getAllByFilters: returns all transaction by informed filters
+  - GET http://localhost:8080/transaction
 - create: performs the registration of a new transaction
   - POST http://localhost:8080/transaction

@@ -42,7 +42,7 @@ public class TransactionEntity {
     @Column(name = "event_time", nullable = false)
     private LocalTime eventTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bank_account_id", nullable = false)
     private BankAccountEntity bankAccount;
 

@@ -86,7 +86,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     private BankAccountEntity findByIdOrThrowObjectNotFound(String id) {
-        return repository.findById(FinanceUtils.stringToUUID(id))
+        return repository.findById(FinanceUtils.stringToUuidOrThrowException(id))
                 .orElseThrow(() -> new BadRequestException("Bank account not found with id ".concat(id)));
     }
 
