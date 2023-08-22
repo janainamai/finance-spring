@@ -6,13 +6,10 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
 
 ### Required installations:
 
-- PostgreSQL
-    - Port: 5432
-    - Username: postgres
-    - Password: postgres
-
 - Java
     - Versions: 17
+
+- Run 'docker-compose up' to let the environment receive the necessary configurations.
 
 ## API's
 
