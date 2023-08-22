@@ -3,6 +3,7 @@ package br.com.finance.finance.services;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.components.factory.TransactionComponentFactory;
 import br.com.finance.finance.domain.entities.TransactionEntity;
+import br.com.finance.finance.domain.enums.EnumTransactionType;
 import br.com.finance.finance.repositories.TransactionRepository;
 import br.com.finance.finance.services.dto.FilterTransactionDto;
 import br.com.finance.finance.services.dto.TransactionDto;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import static br.com.finance.finance.utils.FinanceConstants.INTEGER_TWO;
 import static java.math.RoundingMode.HALF_UP;
@@ -55,6 +58,28 @@ public class TransactionServiceImpl implements TransactionService {
                 dto.getPageable());
 
         return transactionsPage.map(TransactionDto::fromEntity);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) {
+        TransactionEntity transaction = findByIdOrThrowObjectNotFound(id);
+        transaction.setDeleted(true);
+        transaction.setDeletedOn(LocalDateTime.now());
+        transactionRepository.save(transaction);
+
+        revertTransactionValueInBankingAccount(transaction);
+    }
+
+    private void revertTransactionValueInBankingAccount(TransactionEntity transaction) {
+        EnumTransactionType transactionType = null;
+        switch (transaction.getTransactionType()) {
+            case DEBIT -> transactionType = EnumTransactionType.CREDIT;
+            case CREDIT -> transactionType = EnumTransactionType.DEBIT;
+        }
+
+        transactionComponentFactory.getStrategy(transactionType)
+                .updateTransactionValueInBankAccount(transaction.getAmount(), transaction.getBankAccount().getId().toString());
     }
 
     private TransactionEntity saveTransaction(TransactionDto dto) {

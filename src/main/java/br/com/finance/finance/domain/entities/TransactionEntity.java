@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -45,5 +46,11 @@ public class TransactionEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bank_account_id", nullable = false)
     private BankAccountEntity bankAccount;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
+    @Column(name = "deleted_on", nullable = false)
+    private LocalDateTime deletedOn;
 
 }

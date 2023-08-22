@@ -49,3 +49,5 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
   - GET http://localhost:8080/transaction
 - create: performs the registration of a new transaction
   - POST http://localhost:8080/transaction
+- deleteById: updates the transaction as deleted and reverses the value in the respective bank account
+  - DELETE http://localhost:8080/transaction/{id}

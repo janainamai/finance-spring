@@ -39,6 +39,11 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    // todo BigDecimal deleteById(String id)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+        service.deleteById(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

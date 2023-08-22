@@ -42,7 +42,8 @@ public class SecurityConfigurations {
     private void configureTransaction(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
         authorize
                 .requestMatchers(HttpMethod.GET, "/transaction").hasRole(RoleConstants.ADMIN)
-                .requestMatchers(HttpMethod.POST, "/transaction").hasRole(RoleConstants.ADMIN);
+                .requestMatchers(HttpMethod.POST, "/transaction").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.DELETE, "/transaction").hasRole(RoleConstants.ADMIN);
     }
 
     private void configureBank(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {

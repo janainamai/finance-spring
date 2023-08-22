@@ -19,6 +19,7 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
             "LEFT JOIN bank_account b on b.id = t.bankAccount.id " +
             "WHERE " +
                 "t.eventDate BETWEEN :startDate AND :endDate " +
+                "AND t.deleted = false " +
                 "AND b.id = :bankAccountId " +
                 "AND (:transactionType IS NULL or t.transactionType = :transactionType)")
     Page<TransactionEntity> findAllByFilters(

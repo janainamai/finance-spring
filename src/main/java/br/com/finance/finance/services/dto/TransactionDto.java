@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class TransactionDto {
     private LocalDate eventDate;
     private LocalTime eventTime;
     private String bankAccountId;
+    private Boolean deleted;
+    private LocalDateTime deletedOn;
 
     public static TransactionDto fromEntity(TransactionEntity entity) {
         TransactionDto dto = new TransactionDto();
@@ -29,6 +32,8 @@ public class TransactionDto {
         dto.setEventDate(entity.getEventDate());
         dto.setEventTime(entity.getEventTime());
         dto.setBankAccountId(entity.getBankAccount().getId().toString());
+        dto.setDeleted(entity.isDeleted());
+        dto.setDeletedOn(entity.getDeletedOn());
 
         return dto;
     }

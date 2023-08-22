@@ -12,4 +12,5 @@ public interface TransactionService {
 
     Page<TransactionDto> getAllByFilters(FilterTransactionDto dto);
 
+    void deleteById(String id);
 }
