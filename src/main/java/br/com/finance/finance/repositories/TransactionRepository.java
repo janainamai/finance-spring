@@ -1,5 +1,6 @@
 package br.com.finance.finance.repositories;
 
+import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.domain.entities.TransactionEntity;
 import br.com.finance.finance.domain.enums.EnumTransactionType;
 import org.springframework.data.domain.Page;
@@ -29,4 +30,5 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
             @Param("transactionType") EnumTransactionType transactionType,
             Pageable pageable);
 
+    void deleteByBankAccount(BankAccountEntity bankAccount);
 }

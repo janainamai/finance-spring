@@ -80,6 +80,7 @@ public class SecurityConfigurations {
                 .requestMatchers(HttpMethod.GET, "/bank").hasRole(RoleConstants.ADMIN)
                 .requestMatchers(HttpMethod.POST, "/bank").hasRole(RoleConstants.ADMIN)
                 .requestMatchers(HttpMethod.PUT, "/bank").hasRole(RoleConstants.ADMIN)
+                .requestMatchers(HttpMethod.DELETE, "/bank").hasRole(RoleConstants.ADMIN)
                 .requestMatchers(HttpMethod.PATCH, "/bank/deactivate").hasRole(RoleConstants.ADMIN)
                 .requestMatchers(HttpMethod.PATCH, "/bank/activate").hasRole(RoleConstants.ADMIN);
     }

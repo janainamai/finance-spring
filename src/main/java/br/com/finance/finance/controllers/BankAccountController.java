@@ -61,4 +61,11 @@ public class BankAccountController {
         return ResponseEntity.ok(bankAccount);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+        service.deleteById(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

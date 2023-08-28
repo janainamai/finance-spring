@@ -3,10 +3,12 @@ package br.com.finance.finance.services.impl;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
+import br.com.finance.finance.repositories.TransactionRepository;
 import br.com.finance.finance.services.BankAccountServiceImpl;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
 import br.com.finance.finance.services.dto.UpdateBankAccountDto;
+import br.com.finance.finance.validators.BankAccountValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,10 @@ class BankAccountServiceImplTest {
     private BankAccountServiceImpl service;
     @Mock
     private BankAccountRepository repository;
+    @Mock
+    private BankAccountValidator validator;
+    @Mock
+    private TransactionRepository transactionRepository;
     @Captor
     private ArgumentCaptor<BankAccountEntity> captorBank;
 
@@ -93,6 +99,7 @@ class BankAccountServiceImplTest {
 
         service.create(dto);
 
+        verify(validator).validateNameExists(dto.getName());
         verify(repository).save(captorBank.capture());
 
         BankAccountEntity savedBank = captorBank.getValue();
@@ -109,6 +116,7 @@ class BankAccountServiceImplTest {
 
         service.create(dto);
 
+        verify(validator).validateNameExists(dto.getName());
         verify(repository).save(captorBank.capture());
 
         BankAccountEntity savedBank = captorBank.getValue();
@@ -124,6 +132,7 @@ class BankAccountServiceImplTest {
 
         service.create(dto);
 
+        verify(validator).validateNameExists(dto.getName());
         verify(repository).save(captorBank.capture());
 
         BankAccountEntity savedBank = captorBank.getValue();
@@ -274,7 +283,7 @@ class BankAccountServiceImplTest {
 
         assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> service.deactivate(bankAccountId.toString()))
-                        .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
+                .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
 
         verify(repository, times(0)).save(any());
     }
@@ -315,6 +324,36 @@ class BankAccountServiceImplTest {
                 .withMessage("Bank account not found with id ".concat(bankAccountId.toString()));
 
         verify(repository, times(0)).save(any());
+    }
+
+    @Test
+    @DisplayName("Should delete transactions and bank account by bankAccountId")
+    void testDeleteByIdWhenItFounds() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        BankAccountEntity bankAccountEntity = new BankAccountEntity();
+        bankAccountEntity.setId(bankAccountId);
+        when(repository.findById(bankAccountId)).thenReturn(Optional.of(bankAccountEntity));
+
+        service.deleteById(bankAccountId.toString());
+
+        verify(transactionRepository).deleteByBankAccount(bankAccountEntity);
+        verify(repository).delete(bankAccountEntity);
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when it doesn't find a bank account with the given ID")
+    void testDeleteByIdWhenNotFoundById() {
+        UUID bankAccountId = UUID.randomUUID();
+
+        when(repository.findById(bankAccountId)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> service.deleteById(bankAccountId.toString()))
+                .withMessage("Bank account not found with id " + bankAccountId);
+
+        verify(transactionRepository, times(0)).deleteByBankAccount(any());
+        verify(repository, times(0)).delete(any());
     }
 
 }

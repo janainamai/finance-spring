@@ -23,4 +23,6 @@ public interface BankAccountService {
     void activate(String id);
 
     BankAccountEntity getEntityById(String bankAccountId);
+
+    void deleteById(String id);
 }

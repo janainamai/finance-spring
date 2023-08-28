@@ -3,11 +3,13 @@ package br.com.finance.finance.services;
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.repositories.BankAccountRepository;
-import br.com.finance.finance.services.interfaces.BankAccountService;
+import br.com.finance.finance.repositories.TransactionRepository;
 import br.com.finance.finance.services.dto.BankAccountDto;
 import br.com.finance.finance.services.dto.CreateBankAccountDto;
 import br.com.finance.finance.services.dto.UpdateBankAccountDto;
+import br.com.finance.finance.services.interfaces.BankAccountService;
 import br.com.finance.finance.utils.FinanceUtils;
+import br.com.finance.finance.validators.BankAccountValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,10 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Autowired
     private BankAccountRepository repository;
+    @Autowired
+    private BankAccountValidator validator;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -32,6 +38,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     @Transactional
     public void create(CreateBankAccountDto dto) {
+        validator.validateNameExists(dto.getName());
+
         BankAccountEntity bankAccount = new BankAccountEntity();
         bankAccount.setName(dto.getName());
         bankAccount.setDescription(dto.getDescription());
@@ -83,6 +91,15 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Transactional(readOnly = true)
     public BankAccountEntity getEntityById(String bankAccountId) {
         return findByIdOrThrowObjectNotFound(bankAccountId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) {
+        BankAccountEntity bankAccount = findByIdOrThrowObjectNotFound(id);
+        transactionRepository.deleteByBankAccount(bankAccount);
+
+        repository.delete(bankAccount);
     }
 
     private BankAccountEntity findByIdOrThrowObjectNotFound(String id) {
