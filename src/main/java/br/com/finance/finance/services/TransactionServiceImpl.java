@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static br.com.finance.finance.utils.FinanceConstants.INTEGER_TWO;
 import static java.math.RoundingMode.HALF_UP;
@@ -29,6 +30,13 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionComponentFactory transactionComponentFactory;
     @Autowired
     private BankAccountService bankAccountService;
+
+    @Override
+    public List<TransactionDto> getAll() {
+        List<TransactionEntity> transactions = transactionRepository.findAll();
+
+        return TransactionDto.fromEntities(transactions);
+    }
 
     @Override
     @Transactional(readOnly = true)

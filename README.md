@@ -38,12 +38,16 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
   - PUT http://localhost:8080/bank/deactivate/{id}
 - activate: activate a existing bank account
   - PUT http://localhost:8080/bank/activate/{id}
+- deleteById: deletes the bank account and transactions by id
+  - DELETE http://localhost:8080/bank/{id}
 
 ### Finance APIs - Transaction
 - getById: returns the transaction with the given id
   - GET http://localhost:8080/transaction/{id}
-- getAllByFilters: returns all transaction by informed filters
+- getAll: returns all transactions
   - GET http://localhost:8080/transaction
+- getAllByFilters: returns all transaction by informed filters
+  - GET http://localhost:8080/transaction/filters
 - create: performs the registration of a new transaction
   - POST http://localhost:8080/transaction
 - deleteById: updates the transaction as deleted and reverses the value in the respective bank account

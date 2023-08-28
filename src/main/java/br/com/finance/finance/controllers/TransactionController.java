@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
@@ -26,6 +28,13 @@ public class TransactionController {
     }
 
     @GetMapping
+    public ResponseEntity<List<TransactionDto>> getAll() {
+        List<TransactionDto> transactions = service.getAll();
+
+        return ResponseEntity.ok(transactions);
+    }
+
+    @GetMapping("/filter")
     public ResponseEntity<Page<TransactionDto>> getAllByFilters(@Valid @RequestBody FilterTransactionInput input) {
         Page<TransactionDto> page = service.getAllByFilters(input.toDto());
 
