@@ -1,6 +1,7 @@
 package br.com.finance.authentication.infra.security;
 
 import br.com.finance.authentication.domain.entities.UserEntity;
+import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.authentication.infra.security.intefaces.TokenService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -43,7 +44,7 @@ public class TokenServiceImpl implements TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            return "";
+            throw new BadRequestException("Invalid token");
         }
     }
 

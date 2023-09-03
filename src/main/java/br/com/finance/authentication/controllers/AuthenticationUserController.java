@@ -33,4 +33,11 @@ public class AuthenticationUserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/canAccess")
+    public ResponseEntity<Void> checkAccess() {
+        // Implementação futura: quando o usuário não possuir a role, retornar false
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

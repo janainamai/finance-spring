@@ -20,6 +20,7 @@ public class TransactionDto {
     private LocalDate eventDate;
     private LocalTime eventTime;
     private String bankAccountId;
+    private String bankAccountName;
     private Boolean deleted;
     private LocalDateTime deletedOn;
 
@@ -32,6 +33,7 @@ public class TransactionDto {
         dto.setEventDate(entity.getEventDate());
         dto.setEventTime(entity.getEventTime());
         dto.setBankAccountId(entity.getBankAccount().getId().toString());
+        dto.setBankAccountName(entity.getBankAccount().getName());
         dto.setDeleted(entity.isDeleted());
         dto.setDeletedOn(entity.getDeletedOn());
 

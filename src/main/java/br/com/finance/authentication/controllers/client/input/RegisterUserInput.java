@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class RegisterUserInput {
 
-    @NotBlank(message = "username is required")
-    private String username;
+    @NotBlank(message = "login is required")
+    private String login;
 
     @NotBlank(message = "email is required")
     private String email;
@@ -21,7 +21,7 @@ public class RegisterUserInput {
 
     public RegisterUserDto toDto() {
         RegisterUserDto dto = new RegisterUserDto();
-        dto.setLogin(username);
+        dto.setLogin(login);
         dto.setEmail(email);
         dto.setPassword(password);
         dto.setConfirmPassword(confirmPassword);

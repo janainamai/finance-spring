@@ -46,6 +46,8 @@ Project created to manage the finances of 2 individuals, mainly for study purpos
   - GET http://localhost:8080/transaction/{id}
 - getAll: returns all transactions
   - GET http://localhost:8080/transaction
+- getAllByBankAccount: returns all transactions of informed bank account
+  - GET http://localhost:8080/transaction/bankAccount/{bankAccountId}
 - getAllByFilters: returns all transaction by informed filters
   - GET http://localhost:8080/transaction/filters
 - create: performs the registration of a new transaction

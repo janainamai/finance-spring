@@ -10,6 +10,8 @@ public interface TransactionService {
 
     List<TransactionDto> getAll();
 
+    List<TransactionDto> getAllByBankAccountId(String bankAccountId);
+
     TransactionDto getById(String id);
 
     void create(TransactionDto dto);

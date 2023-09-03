@@ -2,6 +2,7 @@ package br.com.finance.finance.services;
 
 import br.com.finance.authentication.infra.exception.BadRequestException;
 import br.com.finance.finance.components.factory.TransactionComponentFactory;
+import br.com.finance.finance.domain.entities.BankAccountEntity;
 import br.com.finance.finance.domain.entities.TransactionEntity;
 import br.com.finance.finance.domain.enums.EnumTransactionType;
 import br.com.finance.finance.repositories.TransactionRepository;
@@ -32,10 +33,21 @@ public class TransactionServiceImpl implements TransactionService {
     private BankAccountService bankAccountService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TransactionDto> getAll() {
-        List<TransactionEntity> transactions = transactionRepository.findAll();
+        List<TransactionEntity> transactions = transactionRepository.findAllByDeletedFalse();
 
         return TransactionDto.fromEntities(transactions);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TransactionDto> getAllByBankAccountId(String bankAccountId) {
+        BankAccountEntity bankAccountEntity = bankAccountService.getEntityById(bankAccountId);
+
+        List<TransactionEntity> transactionEntities = transactionRepository.findAllByBankAccountAndDeletedFalse(bankAccountEntity);
+
+        return TransactionDto.fromEntities(transactionEntities);
     }
 
     @Override

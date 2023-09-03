@@ -41,6 +41,13 @@ public class TransactionController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("/bankAccount/{bankAccountId}")
+    public ResponseEntity<List<TransactionDto>> getAllByBankAccountId(@PathVariable String bankAccountId) {
+        List<TransactionDto> transactionDtos = service.getAllByBankAccountId(bankAccountId);
+
+        return ResponseEntity.ok(transactionDtos);
+    }
+
     @PostMapping()
     public ResponseEntity<Void> create(@Valid @RequestBody CreateTransactionInput input) {
         service.create(input.toDto());
